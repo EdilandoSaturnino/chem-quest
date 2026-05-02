@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Wizard } from "../../components/wizard/wizard";
 import { GoldButton, GhostButton } from "../../components/ui/button";
 import { SpeechBubble } from "../../components/ui/speech-bubble";
-import { leaderboardRepository } from "../../infra/LocalStorageLeaderboardRepository";
+import { leaderboardRepository } from "../../infra/local-storage-leaderboard-repository";
 import type { GameMode } from "../../domain/game/game-mode";
 import { MODE_CONFIG } from "../../domain/game/game-mode";
 

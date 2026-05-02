@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TopBar } from "../../components/layout/top-bar";
-import { leaderboardRepository } from "../../infra/LocalStorageLeaderboardRepository";
+import { leaderboardRepository } from "../../infra/local-storage-leaderboard-repository";
 import type { LeaderboardEntry } from "../../domain/leaderboard/leaderboard-entry";
 import { MODE_CONFIG } from "../../domain/game/game-mode";
 
