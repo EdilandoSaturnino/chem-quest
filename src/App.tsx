@@ -15,6 +15,7 @@ import { PeriodicGameScreen } from "./features/periodic-game/periodic-game-scree
 import { GameOverScreen } from "./features/game-over/came-over-screen";
 import { LeaderboardScreen } from "./features/leaderboard/leader-board-screen";
 import { AppShell } from "./components/layout/app-shell";
+import { useChemHardware } from "./hooks/useChemHardware";
 
 interface GameOverState {
   mode: GameMode;
@@ -23,6 +24,7 @@ interface GameOverState {
 }
 
 export default function App() {
+  const hardware = useChemHardware();
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(STARTING_LIVES);
@@ -75,7 +77,7 @@ export default function App() {
   function renderScreen() {
     switch (currentScreen) {
       case "home":
-        return <HomeScreen onPick={startMode} />;
+        return <HomeScreen hardware={hardware} onPick={startMode} />;
 
       case "livre":
       case "easy":
@@ -90,6 +92,7 @@ export default function App() {
             onLifeLost={handleLifeLost}
             onBack={goHome}
             onGameOver={() => handleGameOver(currentScreen)}
+            hardware={hardware}
           />
         );
 

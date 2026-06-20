@@ -15,6 +15,8 @@ import type { BrewOutcome } from "../../domain/game/brewing-rules";
 import { useRotatingHints } from "./useRotatinghints";
 import { usePlaySession } from "./usePlaySession";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
+import { getSelectedElementsLiquidHue, hueToRgb } from "../../domain/elements/element-color";
+import type { ChemHardwareControls } from "../../hooks/useChemHardware";
 
 const FREE_MODE_HINTS = [
   "Modo Livre: misture o que quiser e descubra compostos.",
@@ -32,17 +34,35 @@ interface PlayScreenProps {
   onLifeLost: () => void;
   onBack: () => void;
   onGameOver: () => void;
+  hardware: ChemHardwareControls;
 }
 
 export function PlayScreen({
   mode, score, lives,
   onScoreGained, onLifeLost,
   onBack, onGameOver,
+  hardware,
 }: PlayScreenProps) {
   const isDesktop = useIsDesktop();
   const isChallenge = mode !== "livre";
 
-  const session = usePlaySession({ mode, onScoreGained, onLifeLost });
+  const session = usePlaySession({ mode, onScoreGained, onLifeLost, hardware });
+
+  useEffect(() => {
+    if (session.brewing || session.lastOutcome) return;
+
+    if (session.selectedElements.length === 0) {
+      void hardware.off();
+      return;
+    }
+
+    const hue = getSelectedElementsLiquidHue(session.selectedElements);
+    void hardware.preview(hueToRgb(hue));
+  }, [hardware, session.brewing, session.lastOutcome, session.selectedElements]);
+
+  useEffect(() => () => {
+    void hardware.off();
+  }, [hardware]);
 
 
   const currentHints = useMemo(() => {
