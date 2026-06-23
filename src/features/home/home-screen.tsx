@@ -1,22 +1,27 @@
 import { Wizard } from "../../components/wizard/wizard";
 import { SpeechBubble } from "../../components/ui/speech-bubble";
+import { GhostButton, GoldButton } from "../../components/ui/button";
 import { MODE_CONFIG, type GameMode, type ModeConfig } from "../../domain/game/game-mode";
+import type { ChemHardwareControls, ChemHardwareStatus } from "../../hooks/useChemHardware";
 
 interface HomeScreenProps {
+  hardware: ChemHardwareControls;
   onPick: (mode: GameMode) => void;
 }
 
-export function HomeScreen({ onPick }: HomeScreenProps) {
+export function HomeScreen({ hardware, onPick }: HomeScreenProps) {
   return (
     <div style={{
       height: "100%", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       padding: "32px 24px", maxWidth: 1200, margin: "0 auto",
       overflow: "auto",
+      position: "relative",
     }} className="scrollbar">
 
       <Title />
       <Greeting />
+      <ArduinoPanel hardware={hardware} />
 
       <div style={{
         display: "grid",
@@ -38,6 +43,57 @@ export function HomeScreen({ onPick }: HomeScreenProps) {
       </p>
     </div>
   );
+}
+
+function ArduinoPanel({ hardware }: { hardware: ChemHardwareControls }) {
+  const connected = hardware.status === "connected";
+  const connecting = hardware.status === "connecting";
+  const unsupported = hardware.status === "unsupported";
+
+  return (
+    <div style={{
+      position: "absolute", top: 16, right: 16,
+      display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6,
+      zIndex: 2,
+    }}>
+      {connected ? (
+        <GhostButton onClick={() => void hardware.disconnect()} style={{ padding: "7px 12px", fontSize: 10 }}>
+          DISCONNECT
+        </GhostButton>
+      ) : (
+        <GoldButton
+          onClick={() => void hardware.connect()}
+          disabled={connecting || unsupported}
+          style={{ padding: "7px 12px", fontSize: 10 }}
+        >
+          {connecting ? "CONNECTING..." : "CONNECT ARDUINO"}
+        </GoldButton>
+      )}
+      {(hardware.status === "error" || unsupported) && (
+        <span style={{
+          maxWidth: 220, textAlign: "right", fontSize: 11,
+          color: "rgba(248,113,113,0.72)", fontStyle: "italic",
+        }}>
+          {hardware.error ?? statusLabel(hardware.status)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function statusLabel(status: ChemHardwareStatus): string {
+  switch (status) {
+    case "unsupported":
+      return "Use Chrome/Edge em localhost para conectar via Web Serial.";
+    case "connecting":
+      return "Escolha a porta serial do Arduino Nano.";
+    case "connected":
+      return "Conectado. O LED vai espelhar o cálice durante o jogo.";
+    case "error":
+      return "Conexão indisponível.";
+    case "disconnected":
+      return "Opcional: conecte antes de escolher um modo.";
+  }
 }
 
 function Title() {

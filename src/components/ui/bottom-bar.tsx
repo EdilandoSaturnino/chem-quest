@@ -1,5 +1,5 @@
-import { useMemo } from "react";
 import type { ChemicalElement } from "../../domain/elements/element";
+import { getSelectedElementsLiquidHue } from "../../domain/elements/element-color";
 import { MiniFlask } from "./mini-flask";
 import { GoldButton } from "./button";
 
@@ -22,11 +22,7 @@ export function BottomBar({
   onClear,
   onBrew,
 }: BottomBarProps) {
-  const liquidHue = useMemo(() => {
-    if (selectedElements.length === 0) return 220;
-    const sum = selectedElements.reduce((acc, el) => acc + el.hue, 0);
-    return Math.round(sum / selectedElements.length);
-  }, [selectedElements]);
+  const liquidHue = getSelectedElementsLiquidHue(selectedElements);
 
   const counterText =
     maxElements
