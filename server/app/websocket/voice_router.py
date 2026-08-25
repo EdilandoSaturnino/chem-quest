@@ -4,6 +4,7 @@ import json
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.config import VITE_DEVELOPMENT_ORIGINS
+from app.llm.provider import LLMProvider
 from app.stt.provider import SpeechToTextProvider
 from app.websocket.protocol import ProtocolViolation, VoiceTurn, VoiceTurnSession
 
@@ -16,7 +17,8 @@ async def voice_websocket(websocket: WebSocket) -> None:
         await websocket.close(code=1008)
         return
 
-    provider: SpeechToTextProvider = websocket.app.state.stt_provider
+    stt_provider: SpeechToTextProvider = websocket.app.state.stt_provider
+    llm_provider: LLMProvider = websocket.app.state.llm_provider
     session = VoiceTurnSession()
     await websocket.accept()
     await websocket.send_json({"type": "session_ready", "protocolVersion": 1})
@@ -33,24 +35,28 @@ async def voice_websocket(websocket: WebSocket) -> None:
             if turn is None:
                 continue
 
-            await websocket.send_json({"type": "transcription_started", "turnId": str(turn.turn_id)})
+            await websocket.send_json({"type": "assistant_started", "turnId": str(turn.turn_id)})
             try:
-                transcription = await asyncio.to_thread(provider.transcribe, turn.samples, 16_000)
+                transcription = await asyncio.to_thread(stt_provider.transcribe, turn.samples, 16_000)
+                response = await asyncio.to_thread(
+                    llm_provider.respond,
+                    transcription.text,
+                    turn.context,
+                )
             except Exception:
                 session.fail_turn()
                 await websocket.send_json({
-                    "type": "transcription_error",
+                    "type": "assistant_error",
                     "turnId": str(turn.turn_id),
-                    "code": "transcription_failed",
+                    "code": "assistant_failed",
                 })
                 continue
 
             session.complete_turn()
             await websocket.send_json({
-                "type": "transcription",
+                "type": "assistant_response",
                 "turnId": str(turn.turn_id),
-                "text": transcription.text,
-                "language": transcription.language,
+                "text": response,
             })
     except WebSocketDisconnect:
         return

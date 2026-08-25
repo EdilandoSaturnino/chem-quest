@@ -7,6 +7,7 @@ from starlette.websockets import WebSocketDisconnect
 
 import app.main as main
 from app.stt.provider import Transcription
+from app.websocket.protocol import GameContext
 
 
 class FakeSpeechToTextProvider:
@@ -21,36 +22,93 @@ class FakeSpeechToTextProvider:
         return Transcription(text="onde o sódio é usado", language="pt")
 
 
-def test_transcribes_a_complete_voice_turn_and_accepts_the_next_turn(
+class FakeLLMProvider:
+    def __init__(self, response: str = "O sódio é usado em lâmpadas e baterias.") -> None:
+        self.response = response
+        self.calls: list[tuple[str, GameContext]] = []
+        self.warmup_calls = 0
+
+    def warmup(self) -> None:
+        self.warmup_calls += 1
+
+    def respond(self, transcription: str, context: GameContext) -> str:
+        self.calls.append((transcription, context))
+        return self.response
+
+
+def test_generates_an_assistant_response_for_a_complete_voice_turn_and_accepts_the_next_turn(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    provider = FakeSpeechToTextProvider()
-    app = create_test_app(monkeypatch, provider)
+    stt_provider = FakeSpeechToTextProvider()
+    llm_provider = FakeLLMProvider()
+    app = create_test_app(monkeypatch, stt_provider, llm_provider)
 
     with TestClient(app) as client:
         with client.websocket_connect("/ws/voice", headers={"origin": "http://localhost:5173"}) as websocket:
             assert websocket.receive_json() == {"type": "session_ready", "protocolVersion": 1}
 
             first_turn_id = send_complete_turn(websocket, [0.25, -0.25])
-            assert websocket.receive_json() == {"type": "transcription_started", "turnId": first_turn_id}
+            assert websocket.receive_json() == {"type": "assistant_started", "turnId": first_turn_id}
             assert websocket.receive_json() == {
-                "type": "transcription",
+                "type": "assistant_response",
                 "turnId": first_turn_id,
-                "text": "onde o sódio é usado",
-                "language": "pt",
+                "text": "O sódio é usado em lâmpadas e baterias.",
             }
 
             second_turn_id = send_complete_turn(websocket, [0.5])
-            assert websocket.receive_json() == {"type": "transcription_started", "turnId": second_turn_id}
-            assert websocket.receive_json()["turnId"] == second_turn_id
+            assert websocket.receive_json() == {"type": "assistant_started", "turnId": second_turn_id}
+            assert websocket.receive_json() == {
+                "type": "assistant_response",
+                "turnId": second_turn_id,
+                "text": "O sódio é usado em lâmpadas e baterias.",
+            }
 
-    assert len(provider.calls) == 2
-    assert provider.calls[0][1] == 16_000
-    np.testing.assert_allclose(provider.calls[0][0], np.array([0.25, -0.25], dtype=np.float32))
+    assert llm_provider.warmup_calls == 1
+    assert len(stt_provider.calls) == 2
+    assert stt_provider.calls[0][1] == 16_000
+    np.testing.assert_allclose(stt_provider.calls[0][0], np.array([0.25, -0.25], dtype=np.float32))
+    assert llm_provider.calls[0][0] == "onde o sódio é usado"
+    assert llm_provider.calls[0][1].mixed_element_symbols == ["Na", "Cl"]
+
+
+def test_reports_assistant_failure_without_returning_the_transcription(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class FailingLLMProvider(FakeLLMProvider):
+        def respond(self, transcription: str, context: GameContext) -> str:
+            raise RuntimeError("Ollama is unavailable")
+
+    app = create_test_app(monkeypatch, FakeSpeechToTextProvider(), FailingLLMProvider())
+
+    with TestClient(app) as client:
+        with client.websocket_connect("/ws/voice", headers={"origin": "http://localhost:5173"}) as websocket:
+            websocket.receive_json()
+            turn_id = send_complete_turn(websocket, [0.25])
+
+            assert websocket.receive_json() == {"type": "assistant_started", "turnId": turn_id}
+            assert websocket.receive_json() == {
+                "type": "assistant_error",
+                "turnId": turn_id,
+                "code": "assistant_failed",
+            }
+
+
+def test_refuses_to_start_when_the_llm_model_cannot_be_validated(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class UnavailableLLMProvider(FakeLLMProvider):
+        def warmup(self) -> None:
+            raise RuntimeError("Qwen3 is unavailable")
+
+    app = create_test_app(monkeypatch, FakeSpeechToTextProvider(), UnavailableLLMProvider())
+
+    with pytest.raises(RuntimeError, match="Qwen3 is unavailable"):
+        with TestClient(app):
+            pass
 
 
 def test_rejects_out_of_order_messages(monkeypatch: pytest.MonkeyPatch) -> None:
-    app = create_test_app(monkeypatch, FakeSpeechToTextProvider())
+    app = create_test_app(monkeypatch, FakeSpeechToTextProvider(), FakeLLMProvider())
 
     with TestClient(app) as client:
         with client.websocket_connect("/ws/voice", headers={"origin": "http://localhost:5173"}) as websocket:
@@ -70,7 +128,7 @@ def test_rejects_out_of_order_messages(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_rejects_invalid_audio_payload(monkeypatch: pytest.MonkeyPatch) -> None:
-    app = create_test_app(monkeypatch, FakeSpeechToTextProvider())
+    app = create_test_app(monkeypatch, FakeSpeechToTextProvider(), FakeLLMProvider())
 
     with TestClient(app) as client:
         with client.websocket_connect("/ws/voice", headers={"origin": "http://localhost:5173"}) as websocket:
@@ -89,9 +147,11 @@ def test_rejects_invalid_audio_payload(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def create_test_app(
     monkeypatch: pytest.MonkeyPatch,
-    provider: FakeSpeechToTextProvider,
+    stt_provider: FakeSpeechToTextProvider,
+    llm_provider: FakeLLMProvider,
 ):
-    monkeypatch.setattr(main, "FasterWhisperProvider", lambda _: provider)
+    monkeypatch.setattr(main, "FasterWhisperProvider", lambda _: stt_provider)
+    monkeypatch.setattr(main, "create_llm_provider", lambda _: llm_provider)
     return main.create_app()
 
 
