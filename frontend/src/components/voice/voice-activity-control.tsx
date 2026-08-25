@@ -30,7 +30,7 @@ export function VoiceActivityControl({ detector }: VoiceActivityControlProps) {
         color: getAccentColor(detector), display: "flex", height: 46,
         justifyContent: "center", left: 16, padding: 0, position: "fixed",
         transition: "border-color 160ms ease, box-shadow 160ms ease, color 160ms ease",
-        width: 46, zIndex: 20,
+        width: 46, zIndex: 60,
       }}
     >
       <StatusIcon state={detector.state} />

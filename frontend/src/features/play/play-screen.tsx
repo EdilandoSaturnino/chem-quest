@@ -171,21 +171,25 @@ export function PlayScreen({
             onBrew={session.brew}
           />
 
-          {mode === "livre" && (
-            <Suspense fallback={null}>
-              <FreeModeVoiceActivity />
-            </Suspense>
-          )}
         </section>
       </main>
 
       {session.lastOutcome && lives > 0 && (
-        <ResultModal
-          outcome={session.lastOutcome}
-          message={composeOutcomeMessage(session.lastOutcome)}
-          onContinue={session.acknowledgeOutcomeAndAdvance}
-          onBackToMenu={onBack}
-        />
+        <>
+          <ResultModal
+            outcome={session.lastOutcome}
+            message={composeOutcomeMessage(session.lastOutcome)}
+            onContinue={session.acknowledgeOutcomeAndAdvance}
+            onBackToMenu={onBack}
+          />
+          {mode === "livre" && (
+            <Suspense fallback={null}>
+              <FreeModeVoiceActivity
+                mixedElementSymbols={session.selectedElements.map(element => element.sym)}
+              />
+            </Suspense>
+          )}
+        </>
       )}
     </div>
   );
