@@ -49,6 +49,9 @@ export function GlobalStyles() {
         from { opacity: 0; transform: translateY(8px); }
         to   { opacity: 1; transform: translateY(0); }
       }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
       @keyframes glow-correct {
         0%, 100% { box-shadow: 0 0 0 rgba(16,217,106,0); }
         50%      { box-shadow: 0 0 30px rgba(16,217,106,0.7); }

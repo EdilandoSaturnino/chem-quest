@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 import { Wizard } from "../../components/wizard/wizard";
 import { BubbleText } from "../../components/ui/speech-bubble";
 import { ElementCard } from "../../components/ui/element-card";
@@ -17,6 +17,11 @@ import { usePlaySession } from "./usePlaySession";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { getSelectedElementsLiquidHue, hueToRgb } from "../../domain/elements/element-color";
 import type { ChemHardwareControls } from "../../hooks/useChemHardware";
+
+const FreeModeVoiceActivity = lazy(async () => {
+  const module = await import("./free-mode-voice-activity");
+  return { default: module.FreeModeVoiceActivity };
+});
 
 const FREE_MODE_HINTS = [
   "Modo Livre: misture o que quiser e descubra compostos.",
@@ -165,6 +170,12 @@ export function PlayScreen({
             onClear={session.clearSelection}
             onBrew={session.brew}
           />
+
+          {mode === "livre" && (
+            <Suspense fallback={null}>
+              <FreeModeVoiceActivity />
+            </Suspense>
+          )}
         </section>
       </main>
 
