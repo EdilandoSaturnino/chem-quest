@@ -5,6 +5,7 @@
 - [mise](https://mise.jdx.dev/)
 - [uv](https://docs.astral.sh/uv/)
 - [Ollama](https://ollama.com/)
+- [Piper](https://github.com/OHF-Voice/piper1-gpl)
 
 ## Setup and run
 
@@ -13,6 +14,8 @@ cd server
 mise install
 uv sync --all-groups
 ollama pull qwen3
+mkdir -p .models/piper
+uv run python -m piper.download_voices --data-dir .models/piper pt_BR-faber-medium
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
@@ -45,6 +48,20 @@ The default system prompt is [app/llm/prompts/orion-system.md](app/llm/prompts/o
 Edit that file to change ORION's behavior, or set `CHEM_QUEST_LLM_SYSTEM_PROMPT_PATH`
 to use another Markdown prompt file.
 
+Piper is the default text-to-speech provider. Its provider-specific settings do
+not apply to future external providers:
+
+```bash
+CHEM_QUEST_TTS_PROVIDER=piper \
+CHEM_QUEST_TTS_PIPER_VOICE=pt_BR-faber-medium \
+CHEM_QUEST_TTS_PIPER_DATA_DIR=.models/piper \
+CHEM_QUEST_TTS_PIPER_USE_CUDA=false \
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+The Piper model and its `.onnx.json` configuration are loaded during startup.
+The `.models/` directory is ignored by Git.
+
 ## Voice WebSocket
 
 Connect the browser to `ws://127.0.0.1:8000/ws/voice`. Each connection processes
@@ -55,11 +72,11 @@ one ordered turn at a time:
 3. one binary WebSocket frame containing raw 16 kHz mono `f32le` samples
 4. `speech_end`
 
-The server responds with `session_ready`, `assistant_started`, then either
-`assistant_response` (with the generated text) or `assistant_error`. The
-transcription is only sent to the configured LLM and is not returned to the
-browser. Protocol violations return `protocol_error` and close the socket.
-Audio is limited to 60 seconds per turn.
+The server responds with `session_ready`, `assistant_started`, then either an
+`assistant_audio` JSON message with `turnId` and `mimeType: "audio/wav"`, followed
+by one binary WAV frame, or `assistant_error`. The transcription and generated
+text are only used by the backend. Protocol violations return `protocol_error`
+and close the socket. Input audio is limited to 60 seconds per turn.
 
 ## Tests
 

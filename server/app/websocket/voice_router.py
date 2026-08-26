@@ -6,6 +6,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.config import VITE_DEVELOPMENT_ORIGINS
 from app.llm.provider import LLMProvider
 from app.stt.provider import SpeechToTextProvider
+from app.tts.provider import TTSProvider
 from app.websocket.protocol import ProtocolViolation, VoiceTurn, VoiceTurnSession
 
 router = APIRouter()
@@ -19,6 +20,7 @@ async def voice_websocket(websocket: WebSocket) -> None:
 
     stt_provider: SpeechToTextProvider = websocket.app.state.stt_provider
     llm_provider: LLMProvider = websocket.app.state.llm_provider
+    tts_provider: TTSProvider = websocket.app.state.tts_provider
     session = VoiceTurnSession()
     await websocket.accept()
     await websocket.send_json({"type": "session_ready", "protocolVersion": 1})
@@ -43,6 +45,7 @@ async def voice_websocket(websocket: WebSocket) -> None:
                     transcription.text,
                     turn.context,
                 )
+                speech = await asyncio.to_thread(tts_provider.synthesize, response)
             except Exception:
                 session.fail_turn()
                 await websocket.send_json({
@@ -54,10 +57,11 @@ async def voice_websocket(websocket: WebSocket) -> None:
 
             session.complete_turn()
             await websocket.send_json({
-                "type": "assistant_response",
+                "type": "assistant_audio",
                 "turnId": str(turn.turn_id),
-                "text": response,
+                "mimeType": speech.media_type,
             })
+            await websocket.send_bytes(speech.audio)
     except WebSocketDisconnect:
         return
 

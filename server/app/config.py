@@ -26,3 +26,8 @@ class LLMSettings:
     system_prompt_path: Path = Path(
         getenv("CHEM_QUEST_LLM_SYSTEM_PROMPT_PATH", str(DEFAULT_LLM_SYSTEM_PROMPT_PATH)),
     )
+
+
+@dataclass(frozen=True)
+class TTSSettings:
+    provider: str = getenv("CHEM_QUEST_TTS_PROVIDER", "piper")
