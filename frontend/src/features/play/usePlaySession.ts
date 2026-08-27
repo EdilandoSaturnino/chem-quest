@@ -17,9 +17,8 @@ import {
 } from "../../domain/game/game-mode";
 import { randomFrom } from "../../domain/game/random";
 import type { ChemHardwareControls } from "../../hooks/useChemHardware";
-import type { HardwareResultKind } from "../../infra/serial/chem-hardware-controller";
 
-const BREW_ANIMATION_MS = 1400;
+const VIRTUAL_BREW_ANIMATION_MS = 1400;
 
 interface UsePlaySessionParams {
   mode: PlayableMode;
@@ -95,8 +94,16 @@ export function usePlaySession({
     const brewElements = selectedIndices.map(i => ELEMENTS[i]!);
     const brewColor = hueToRgb(getSelectedElementsLiquidHue(brewElements));
 
-    void hardware.mix(brewColor, BREW_ANIMATION_MS);
-    await new Promise(resolve => setTimeout(resolve, BREW_ANIMATION_MS));
+    try {
+      if (mode === "livre") {
+        await hardware.mix(brewColor);
+      } else {
+        await new Promise(resolve => setTimeout(resolve, VIRTUAL_BREW_ANIMATION_MS));
+      }
+    } catch {
+      setBrewing(false);
+      return;
+    }
 
     const outcome: BrewOutcome = isChallenge && target
       ? evaluateChallengeBrew(mode as ChallengeMode, syms, target)
@@ -104,8 +111,6 @@ export function usePlaySession({
 
     if (outcome.points > 0) onScoreGained(outcome.points);
     if (shouldLoseLife(outcome)) onLifeLost();
-
-    void hardware.result(hardwareResultKind(outcome), hardwareResultColor(outcome, brewColor));
 
     setLastOutcome(outcome);
     setBrewing(false);
@@ -136,28 +141,4 @@ export function usePlaySession({
 
 function pickTarget(diff: ChallengeMode): Compound {
   return randomFrom(compoundsByDifficulty(diff));
-}
-
-function hardwareResultKind(outcome: BrewOutcome): HardwareResultKind {
-  switch (outcome.kind) {
-    case "challenge-hit":
-    case "discovery":
-    case "free-potion":
-      return "success";
-    case "challenge-off":
-      return "partial";
-    case "challenge-miss":
-    case "free-fizzle":
-      return "fail";
-  }
-}
-
-function hardwareResultColor(outcome: BrewOutcome, brewColor: ReturnType<typeof hueToRgb>) {
-  switch (outcome.kind) {
-    case "challenge-miss":
-    case "free-fizzle":
-      return { r: 255, g: 25, b: 0 };
-    default:
-      return brewColor;
-  }
 }

@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RgbColor } from "../domain/elements/element-color";
-import {
-  ChemHardwareController,
-  type HardwareResultKind,
-} from "../infra/serial/chem-hardware-controller";
+import { ChemHardwareController } from "../infra/serial/chem-hardware-controller";
 
 export type ChemHardwareStatus =
   | "unsupported"
@@ -18,8 +15,7 @@ export interface ChemHardwareControls {
   readonly connect: () => Promise<void>;
   readonly disconnect: () => Promise<void>;
   readonly preview: (color: RgbColor) => Promise<void>;
-  readonly mix: (color: RgbColor, durationMs: number) => Promise<void>;
-  readonly result: (kind: HardwareResultKind, color: RgbColor) => Promise<void>;
+  readonly mix: (color: RgbColor) => Promise<void>;
   readonly off: () => Promise<void>;
 }
 
@@ -80,11 +76,18 @@ export function useChemHardware(): ChemHardwareControls {
   const preview = useCallback((color: RgbColor) =>
     runIfConnected(controller => controller.preview(color)), [runIfConnected]);
 
-  const mix = useCallback((color: RgbColor, durationMs: number) =>
-    runIfConnected(controller => controller.mix(color, durationMs)), [runIfConnected]);
+  const mix = useCallback(async (color: RgbColor) => {
+    const controller = controllerRef.current;
+    if (!controller?.connected) return;
 
-  const result = useCallback((kind: HardwareResultKind, color: RgbColor) =>
-    runIfConnected(controller => controller.result(kind, color)), [runIfConnected]);
+    try {
+      await controller.mix(color);
+    } catch (e) {
+      setStatus("error");
+      setError(e instanceof Error ? e.message : "Falha durante a síntese no Arduino.");
+      throw e;
+    }
+  }, []);
 
   const off = useCallback(() =>
     runIfConnected(controller => controller.off()), [runIfConnected]);
@@ -100,7 +103,6 @@ export function useChemHardware(): ChemHardwareControls {
     disconnect,
     preview,
     mix,
-    result,
     off,
-  }), [status, error, connect, disconnect, preview, mix, result, off]);
+  }), [status, error, connect, disconnect, preview, mix, off]);
 }

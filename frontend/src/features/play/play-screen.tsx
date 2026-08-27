@@ -54,6 +54,7 @@ export function PlayScreen({
   const session = usePlaySession({ mode, onScoreGained, onLifeLost, hardware });
 
   useEffect(() => {
+    if (mode !== "livre") return;
     if (session.brewing || session.lastOutcome) return;
 
     if (session.selectedElements.length === 0) {
@@ -63,11 +64,15 @@ export function PlayScreen({
 
     const hue = getSelectedElementsLiquidHue(session.selectedElements);
     void hardware.preview(hueToRgb(hue));
-  }, [hardware, session.brewing, session.lastOutcome, session.selectedElements]);
+  }, [hardware, mode, session.brewing, session.lastOutcome, session.selectedElements]);
 
-  useEffect(() => () => {
-    void hardware.off();
-  }, [hardware]);
+  useEffect(() => {
+    if (mode !== "livre") return;
+
+    return () => {
+      void hardware.off();
+    };
+  }, [hardware, mode]);
 
 
   const currentHints = useMemo(() => {
