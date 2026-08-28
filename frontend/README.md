@@ -1,5 +1,17 @@
 # React + TypeScript + Vite
 
+## Voice assistant
+
+The free-mode assistant connects directly to an existing ElevenAgents agent through
+the React SDK. Create `frontend/.env.local` with its public agent ID:
+
+```bash
+VITE_ELEVENLABS_AGENT_ID=agent_your_existing_agent_id
+```
+
+Do not put an ElevenLabs API key in the frontend. This integration expects a public
+agent and does not contact the local FastAPI voice server.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

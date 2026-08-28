@@ -1,5 +1,9 @@
 # Chem Quest Server
 
+> Legacy local voice pipeline: the React application now connects directly to
+> ElevenAgents and does not require this service. The Faster-Whisper, Ollama, and
+> Piper setup below is retained for future local/fallback development only.
+
 ## Requirements
 
 - [mise](https://mise.jdx.dev/)
