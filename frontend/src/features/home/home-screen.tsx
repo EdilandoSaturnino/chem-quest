@@ -21,7 +21,6 @@ export function HomeScreen({ hardware, onPick }: HomeScreenProps) {
 
       <Title />
       <Greeting />
-      <ArduinoPanel hardware={hardware} />
 
       <div style={{
         display: "grid",
