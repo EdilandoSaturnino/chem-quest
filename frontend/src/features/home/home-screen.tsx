@@ -1,7 +1,6 @@
 import { Wizard } from "../../components/wizard/wizard";
 import { SpeechBubble } from "../../components/ui/speech-bubble";
 import { MODE_CONFIG, type GameMode, type ModeConfig } from "../../domain/game/game-mode";
-import type { ChemHardwareControls, ChemHardwareStatus } from "../../hooks/useChemHardware";
 
 interface HomeScreenProps {
   onPick: (mode: GameMode) => void;
@@ -40,21 +39,6 @@ export function HomeScreen({ onPick }: HomeScreenProps) {
       </p>
     </div>
   );
-}
-
-function statusLabel(status: ChemHardwareStatus): string {
-  switch (status) {
-    case "unsupported":
-      return "Use Chrome/Edge em localhost para conectar via Web Serial.";
-    case "connecting":
-      return "Escolha a porta serial do Arduino Nano.";
-    case "connected":
-      return "Conectado. O LED vai espelhar o cálice durante o jogo.";
-    case "error":
-      return "Conexão indisponível.";
-    case "disconnected":
-      return "Opcional: conecte antes de escolher um modo.";
-  }
 }
 
 function Title() {
