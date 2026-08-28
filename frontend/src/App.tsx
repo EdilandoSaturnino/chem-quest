@@ -77,7 +77,7 @@ export default function App() {
   function renderScreen() {
     switch (currentScreen) {
       case "home":
-        return <HomeScreen hardware={hardware} onPick={startMode} />;
+        return <HomeScreen onPick={startMode} />;
 
       case "livre":
       case "easy":
