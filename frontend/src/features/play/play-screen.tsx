@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef } from "react";
 import { Wizard } from "../../components/wizard/wizard";
 import { BubbleText } from "../../components/ui/speech-bubble";
 import { ElementCard } from "../../components/ui/element-card";
@@ -15,7 +15,7 @@ import type { BrewOutcome } from "../../domain/game/brewing-rules";
 import { useRotatingHints } from "./useRotatinghints";
 import { usePlaySession } from "./usePlaySession";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
-import { getSelectedElementsLiquidHue, hueToRgb } from "../../domain/elements/element-color";
+import { getSelectedElementsBottleColors, OFF_COLOR } from "../../domain/elements/element-color";
 import type { ChemHardwareControls } from "../../hooks/useChemHardware";
 
 const FreeModeVoiceActivity = lazy(async () => {
@@ -50,20 +50,46 @@ export function PlayScreen({
 }: PlayScreenProps) {
   const isDesktop = useIsDesktop();
   const isChallenge = mode !== "livre";
+  const freeModeInitializedRef = useRef(false);
 
   const session = usePlaySession({ mode, onScoreGained, onLifeLost, hardware });
+
+  useEffect(() => {
+    if (mode !== "livre") {
+      freeModeInitializedRef.current = false;
+      return;
+    }
+
+    let cancelled = false;
+    freeModeInitializedRef.current = false;
+
+    void (async () => {
+      await hardware.off();
+      if (cancelled) return;
+
+      freeModeInitializedRef.current = true;
+      await hardware.enterFreeMode();
+    })();
+
+    return () => {
+      cancelled = true;
+      freeModeInitializedRef.current = false;
+    };
+  }, [hardware, mode]);
 
   useEffect(() => {
     if (mode !== "livre") return;
     if (session.brewing || session.lastOutcome) return;
 
     if (session.selectedElements.length === 0) {
-      void hardware.off();
+      if (freeModeInitializedRef.current) void hardware.off();
       return;
     }
 
-    const hue = getSelectedElementsLiquidHue(session.selectedElements);
-    void hardware.preview(hueToRgb(hue));
+    void hardware.preview({
+      ...getSelectedElementsBottleColors(session.selectedElements),
+      middle: OFF_COLOR,
+    });
   }, [hardware, mode, session.brewing, session.lastOutcome, session.selectedElements]);
 
   useEffect(() => {

@@ -18,8 +18,16 @@ void handleCommand(const SerialCommand& command) {
       SerialProtocol::sendPong(flowController.ready());
       return;
 
+    case CommandType::EnterFreeMode:
+      if (!flowController.enterFreeMode()) {
+        SerialProtocol::sendError(F("BUSY"));
+        return;
+      }
+      SerialProtocol::sendOk(F("FREE_MODE"));
+      return;
+
     case CommandType::Preview:
-      if (!flowController.preview(command.color)) {
+      if (!flowController.preview(command.colors)) {
         SerialProtocol::sendError(F("BUSY"));
         return;
       }
@@ -27,7 +35,7 @@ void handleCommand(const SerialCommand& command) {
       return;
 
     case CommandType::Mix:
-      if (!flowController.start(command.color, SoundId::SynthesisStarted)) {
+      if (!flowController.start(command.colors, command.outcome)) {
         SerialProtocol::sendError(F("BUSY"));
       }
       return;
@@ -64,6 +72,12 @@ void publishFlowEvent(const FlowEvent& event) {
       return;
     case FlowEventType::Aborted:
       SerialProtocol::sendFlowAborted();
+      return;
+    case FlowEventType::Mp3BusyStartError:
+      SerialProtocol::sendMp3BusyStartError(soundDefinition(event.sound).protocolName);
+      return;
+    case FlowEventType::Mp3BusyEndError:
+      SerialProtocol::sendMp3BusyEndError(soundDefinition(event.sound).protocolName);
       return;
     case FlowEventType::None:
       return;

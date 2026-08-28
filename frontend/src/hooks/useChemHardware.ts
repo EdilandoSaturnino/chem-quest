@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { RgbColor } from "../domain/elements/element-color";
+import type { BottleColors } from "../domain/elements/element-color";
 import { ChemHardwareController } from "../infra/serial/chem-hardware-controller";
 
 export type ChemHardwareStatus =
@@ -14,8 +14,9 @@ export interface ChemHardwareControls {
   readonly error: string | null;
   readonly connect: () => Promise<void>;
   readonly disconnect: () => Promise<void>;
-  readonly preview: (color: RgbColor) => Promise<void>;
-  readonly mix: (color: RgbColor) => Promise<void>;
+  readonly enterFreeMode: () => Promise<void>;
+  readonly preview: (colors: BottleColors) => Promise<void>;
+  readonly mix: (colors: BottleColors, successful: boolean) => Promise<void>;
   readonly off: () => Promise<void>;
 }
 
@@ -73,15 +74,18 @@ export function useChemHardware(): ChemHardwareControls {
     }
   }, []);
 
-  const preview = useCallback((color: RgbColor) =>
-    runIfConnected(controller => controller.preview(color)), [runIfConnected]);
+  const enterFreeMode = useCallback(() =>
+    runIfConnected(controller => controller.enterFreeMode()), [runIfConnected]);
 
-  const mix = useCallback(async (color: RgbColor) => {
+  const preview = useCallback((colors: BottleColors) =>
+    runIfConnected(controller => controller.preview(colors)), [runIfConnected]);
+
+  const mix = useCallback(async (colors: BottleColors, successful: boolean) => {
     const controller = controllerRef.current;
     if (!controller?.connected) return;
 
     try {
-      await controller.mix(color);
+      await controller.mix(colors, successful);
     } catch (e) {
       setStatus("error");
       setError(e instanceof Error ? e.message : "Falha durante a síntese no Arduino.");
@@ -101,8 +105,9 @@ export function useChemHardware(): ChemHardwareControls {
     error,
     connect,
     disconnect,
+    enterFreeMode,
     preview,
     mix,
     off,
-  }), [status, error, connect, disconnect, preview, mix, off]);
+  }), [status, error, connect, disconnect, enterFreeMode, preview, mix, off]);
 }

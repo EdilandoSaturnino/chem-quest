@@ -6,6 +6,14 @@ export interface RgbColor {
   readonly b: number;
 }
 
+export interface BottleColors {
+  readonly left: RgbColor;
+  readonly right: RgbColor;
+  readonly middle: RgbColor;
+}
+
+export const OFF_COLOR: RgbColor = { r: 0, g: 0, b: 0 };
+
 export function getSelectedElementsLiquidHue(
   selectedElements: readonly ChemicalElement[],
 ): number {
@@ -16,6 +24,24 @@ export function getSelectedElementsLiquidHue(
 
 export function hueToRgb(hue: number): RgbColor {
   return hslToRgb(hue, 80, 50);
+}
+
+export function getSelectedElementsBottleColors(
+  selectedElements: readonly ChemicalElement[],
+): BottleColors {
+  const leftElements = selectedElements.filter((_, index) => index % 2 === 0);
+  const rightElements = selectedElements.filter((_, index) => index % 2 === 1);
+
+  return {
+    left: colorFor(leftElements),
+    right: colorFor(rightElements),
+    middle: colorFor(selectedElements),
+  };
+}
+
+function colorFor(elements: readonly ChemicalElement[]): RgbColor {
+  if (elements.length === 0) return OFF_COLOR;
+  return hueToRgb(getSelectedElementsLiquidHue(elements));
 }
 
 function hslToRgb(hue: number, saturationPercent: number, lightnessPercent: number): RgbColor {

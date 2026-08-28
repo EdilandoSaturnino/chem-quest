@@ -10,23 +10,28 @@ class LedStrip {
 
   void begin();
   void clear();
-  void showPreview(const Config::RgbColor& color);
-  void showLoading(const Config::RgbColor& color, uint8_t litLedCount);
-  void showMixing(const Config::RgbColor& color, bool enabled);
+  void showPreview(const Config::BottleColors& colors);
+  void showLoading(const Config::RgbColor& middleColor, uint8_t position);
+  void showSideLoading(
+      const Config::RgbColor& leftColor,
+      uint8_t leftLitLedCount,
+      const Config::RgbColor& rightColor,
+      uint8_t rightLitLedCount);
+  void clearMiddle();
+  void showMixing(const Config::RgbColor& middleColor, bool enabled);
+  void showResult(bool successful);
 
  private:
-  enum class DisplayState {
-    Unknown,
-    Off,
-    Preview,
-    Loading,
-    Mixing,
-  };
+  void showSolid(Adafruit_NeoPixel& strip, const Config::RgbColor& color);
+  void showBottomToTop(
+      Adafruit_NeoPixel& strip,
+      const Config::RgbColor& color,
+      uint8_t litLedCount);
+  void clearStrip(Adafruit_NeoPixel& strip);
 
-  void showAll(const Config::RgbColor& color);
-
-  Adafruit_NeoPixel pixels_;
-  DisplayState displayState_ = DisplayState::Unknown;
-  uint8_t displayedLoadingCount_ = 0;
-  Config::RgbColor displayedColor_ = {0, 0, 0};
+  Adafruit_NeoPixel leftPixels_;
+  Adafruit_NeoPixel middlePixels_;
+  Adafruit_NeoPixel rightPixels_;
+  uint8_t displayedLoadingPosition_ = Config::kMiddleLedCount;
+  Config::RgbColor displayedLoadingColor_ = {0, 0, 0};
 };

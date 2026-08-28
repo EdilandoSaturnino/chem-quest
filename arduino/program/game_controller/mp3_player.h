@@ -13,6 +13,7 @@ class Mp3Player {
   void update();
   void setVolume();
   void play(const SoundDefinition& sound);
+  bool isPlaying() const;
 
  private:
   SoftwareSerial serial_;

@@ -71,20 +71,34 @@ void SerialProtocol::sendFlowAborted() {
   Serial.println(F("FLOW ABORTED"));
 }
 
+void SerialProtocol::sendMp3BusyStartError(const char* soundName) {
+  Serial.print(F("ERROR MP3_BUSY_START "));
+  Serial.println(soundName);
+}
+
+void SerialProtocol::sendMp3BusyEndError(const char* soundName) {
+  Serial.print(F("ERROR MP3_BUSY_END "));
+  Serial.println(soundName);
+}
+
 bool SerialProtocol::parseBufferedCommand(SerialCommand& command) {
   if (strcmp(buffer_, "PING") == 0) {
     command.type = CommandType::Ping;
+    return true;
+  }
+  if (strcmp(buffer_, "ENTER_FREE_MODE") == 0) {
+    command.type = CommandType::EnterFreeMode;
     return true;
   }
   if (strcmp(buffer_, "OFF") == 0) {
     command.type = CommandType::Off;
     return true;
   }
-  if (parseColor(buffer_, "PREVIEW", command.color)) {
+  if (parseBottleColors(buffer_, "PREVIEW", command.colors)) {
     command.type = CommandType::Preview;
     return true;
   }
-  if (parseColor(buffer_, "MIX", command.color)) {
+  if (parseMix(buffer_, command)) {
     command.type = CommandType::Mix;
     return true;
   }
@@ -93,22 +107,59 @@ bool SerialProtocol::parseBufferedCommand(SerialCommand& command) {
   return true;
 }
 
-bool SerialProtocol::parseColor(const char* input, const char* action, Config::RgbColor& color) {
+bool SerialProtocol::parseBottleColors(
+    char* input,
+    const char* action,
+    Config::BottleColors& colors) {
   const size_t actionLength = strlen(action);
   if (strncmp(input, action, actionLength) != 0 || input[actionLength] != ' ') return false;
 
-  char* cursor = const_cast<char*>(input + actionLength + 1);
+  char* cursor = input + actionLength + 1;
+  if (!parseColor(cursor, colors.left)) return false;
+  if (!parseColor(cursor, colors.right)) return false;
+  if (!parseColor(cursor, colors.middle)) return false;
+  return *cursor == '\0';
+}
+
+bool SerialProtocol::parseMix(char* input, SerialCommand& command) {
+  if (!parseBottleColors(input, "MIX", command.colors)) {
+    const size_t actionLength = strlen("MIX");
+    if (strncmp(input, "MIX", actionLength) != 0 || input[actionLength] != ' ') return false;
+
+    char* cursor = input + actionLength + 1;
+    if (!parseColor(cursor, command.colors.left)) return false;
+    if (!parseColor(cursor, command.colors.right)) return false;
+    if (!parseColor(cursor, command.colors.middle)) return false;
+
+    if (strcmp(cursor, "SUCCESS") == 0) {
+      command.outcome = Config::MixOutcome::Success;
+      return true;
+    }
+    if (strcmp(cursor, "FAIL") == 0) {
+      command.outcome = Config::MixOutcome::Failure;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool SerialProtocol::parseColor(char*& cursor, Config::RgbColor& color) {
   char* end = nullptr;
   const long red = strtol(cursor, &end, 10);
   if (end == cursor || *end != ' ') return false;
   cursor = end + 1;
+
   const long green = strtol(cursor, &end, 10);
   if (end == cursor || *end != ' ') return false;
   cursor = end + 1;
+
   const long blue = strtol(cursor, &end, 10);
-  if (end == cursor || *end != '\0') return false;
+  if (end == cursor) return false;
+  cursor = end;
   if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) return false;
 
   color = {static_cast<uint8_t>(red), static_cast<uint8_t>(green), static_cast<uint8_t>(blue)};
+  while (*cursor == ' ') ++cursor;
   return true;
 }

@@ -1,73 +1,98 @@
 #include "led_strip.h"
 
 LedStrip::LedStrip()
-    : pixels_(Config::kLedCount, Config::kLedDataPin, NEO_GRB + NEO_KHZ800) {}
+    : leftPixels_(Config::kLeftLedCount, Config::kLeftLedDataPin, NEO_GRB + NEO_KHZ800),
+      middlePixels_(Config::kMiddleLedCount, Config::kMiddleLedDataPin, NEO_GRB + NEO_KHZ800),
+      rightPixels_(Config::kRightLedCount, Config::kRightLedDataPin, NEO_GRB + NEO_KHZ800) {}
 
 void LedStrip::begin() {
-  pixels_.begin();
+  leftPixels_.begin();
+  middlePixels_.begin();
+  rightPixels_.begin();
   clear();
 }
 
 void LedStrip::clear() {
-  if (displayState_ == DisplayState::Off) return;
-
-  pixels_.clear();
-  pixels_.show();
-  displayState_ = DisplayState::Off;
+  clearStrip(leftPixels_);
+  clearStrip(middlePixels_);
+  clearStrip(rightPixels_);
+  displayedLoadingPosition_ = Config::kMiddleLedCount;
 }
 
-void LedStrip::showPreview(const Config::RgbColor& color) {
-  if (displayState_ == DisplayState::Preview &&
-      displayedColor_.red == color.red &&
-      displayedColor_.green == color.green &&
-      displayedColor_.blue == color.blue) {
+void LedStrip::showPreview(const Config::BottleColors& colors) {
+  showSolid(leftPixels_, colors.left);
+  showSolid(middlePixels_, colors.middle);
+  showSolid(rightPixels_, colors.right);
+  displayedLoadingPosition_ = Config::kMiddleLedCount;
+}
+
+void LedStrip::showLoading(const Config::RgbColor& middleColor, uint8_t position) {
+  const uint8_t normalizedPosition = position % Config::kMiddleLedCount;
+  if (displayedLoadingPosition_ == normalizedPosition &&
+      displayedLoadingColor_.red == middleColor.red &&
+      displayedLoadingColor_.green == middleColor.green &&
+      displayedLoadingColor_.blue == middleColor.blue) {
     return;
   }
 
-  showAll(color);
-  displayState_ = DisplayState::Preview;
-  displayedColor_ = color;
+  middlePixels_.clear();
+  const uint32_t color = middlePixels_.Color(middleColor.red, middleColor.green, middleColor.blue);
+  for (uint8_t offset = 0; offset < Config::kLoadingSegmentLedCount; ++offset) {
+    const uint8_t index = (normalizedPosition + offset) % Config::kMiddleLedCount;
+    middlePixels_.setPixelColor(index, color);
+  }
+  middlePixels_.show();
+  displayedLoadingPosition_ = normalizedPosition;
+  displayedLoadingColor_ = middleColor;
 }
 
-void LedStrip::showLoading(const Config::RgbColor& color, uint8_t litLedCount) {
-  const uint8_t visibleLedCount = min(litLedCount, Config::kLedCount);
-  if (displayState_ == DisplayState::Loading &&
-      displayedLoadingCount_ == visibleLedCount &&
-      displayedColor_.red == color.red &&
-      displayedColor_.green == color.green &&
-      displayedColor_.blue == color.blue) {
-    return;
-  }
-
-  const uint32_t loadingColor = pixels_.Color(color.red, color.green, color.blue);
-  for (uint8_t index = 0; index < Config::kLedCount; ++index) {
-    pixels_.setPixelColor(index, index < visibleLedCount ? loadingColor : 0);
-  }
-  pixels_.show();
-  displayState_ = DisplayState::Loading;
-  displayedLoadingCount_ = visibleLedCount;
-  displayedColor_ = color;
+void LedStrip::showSideLoading(
+    const Config::RgbColor& leftColor,
+    uint8_t leftLitLedCount,
+    const Config::RgbColor& rightColor,
+    uint8_t rightLitLedCount) {
+  showBottomToTop(leftPixels_, leftColor, leftLitLedCount);
+  showBottomToTop(rightPixels_, rightColor, rightLitLedCount);
 }
 
-void LedStrip::showMixing(const Config::RgbColor& color, bool enabled) {
+void LedStrip::clearMiddle() {
+  clearStrip(middlePixels_);
+  displayedLoadingPosition_ = Config::kMiddleLedCount;
+}
+
+void LedStrip::showMixing(const Config::RgbColor& middleColor, bool enabled) {
   if (!enabled) {
-    clear();
+    clearMiddle();
     return;
   }
 
-  if (displayState_ == DisplayState::Mixing &&
-      displayedColor_.red == color.red &&
-      displayedColor_.green == color.green &&
-      displayedColor_.blue == color.blue) {
-    return;
-  }
-
-  showAll(color);
-  displayState_ = DisplayState::Mixing;
-  displayedColor_ = color;
+  showSolid(middlePixels_, middleColor);
+  displayedLoadingPosition_ = Config::kMiddleLedCount;
 }
 
-void LedStrip::showAll(const Config::RgbColor& color) {
-  pixels_.fill(pixels_.Color(color.red, color.green, color.blue));
-  pixels_.show();
+void LedStrip::showResult(bool successful) {
+  showSolid(middlePixels_, successful ? Config::kSuccessColor : Config::kFailureColor);
+  displayedLoadingPosition_ = Config::kMiddleLedCount;
+}
+
+void LedStrip::showSolid(Adafruit_NeoPixel& strip, const Config::RgbColor& color) {
+  strip.fill(strip.Color(color.red, color.green, color.blue));
+  strip.show();
+}
+
+void LedStrip::showBottomToTop(
+    Adafruit_NeoPixel& strip,
+    const Config::RgbColor& color,
+    uint8_t litLedCount) {
+  const uint8_t visibleLedCount = min(litLedCount, static_cast<uint8_t>(strip.numPixels()));
+  const uint32_t visibleColor = strip.Color(color.red, color.green, color.blue);
+  for (uint8_t index = 0; index < strip.numPixels(); ++index) {
+    strip.setPixelColor(index, index < visibleLedCount ? visibleColor : 0);
+  }
+  strip.show();
+}
+
+void LedStrip::clearStrip(Adafruit_NeoPixel& strip) {
+  strip.clear();
+  strip.show();
 }

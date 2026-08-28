@@ -1,4 +1,4 @@
-import type { RgbColor } from "../../domain/elements/element-color";
+import type { BottleColors } from "../../domain/elements/element-color";
 
 interface SerialPortLike {
   readonly readable: ReadableStream<Uint8Array> | null;
@@ -24,7 +24,7 @@ interface PendingMix {
 const BAUD_RATE = 9600;
 const READY_TIMEOUT_MS = 5_000;
 const READY_PING_INTERVAL_MS = 250;
-const FLOW_TIMEOUT_MS = 20_000;
+const FLOW_TIMEOUT_MS = 75_000;
 
 export class ChemHardwareController {
   private port: SerialPortLike | null = null;
@@ -107,11 +107,15 @@ export class ChemHardwareController {
     }
   }
 
-  preview(color: RgbColor): Promise<void> {
-    return this.sendColorCommand("PREVIEW", color);
+  enterFreeMode(): Promise<void> {
+    return this.sendRaw("ENTER_FREE_MODE");
   }
 
-  mix(color: RgbColor): Promise<void> {
+  preview(colors: BottleColors): Promise<void> {
+    return this.sendBottleColorsCommand("PREVIEW", colors);
+  }
+
+  mix(colors: BottleColors, successful: boolean): Promise<void> {
     if (!this.connected) return Promise.resolve();
     if (this.pendingMix) return Promise.reject(new Error("Uma síntese já está em andamento."));
 
@@ -121,7 +125,8 @@ export class ChemHardwareController {
       }, FLOW_TIMEOUT_MS);
       this.pendingMix = { resolve, reject, timeoutId };
 
-      void this.sendColorCommand("MIX", color).catch((error: unknown) => {
+      const outcome = successful ? "SUCCESS" : "FAIL";
+      void this.sendBottleColorsCommand("MIX", colors, outcome).catch((error: unknown) => {
         this.rejectPendingMix(toError(error, "Falha ao iniciar a síntese no Arduino."));
       });
     });
@@ -185,8 +190,14 @@ export class ChemHardwareController {
     }
   }
 
-  private sendColorCommand(prefix: string, color: RgbColor): Promise<void> {
-    const command = `${prefix} ${clampByte(color.r)} ${clampByte(color.g)} ${clampByte(color.b)}`;
+  private sendBottleColorsCommand(
+    action: string,
+    colors: BottleColors,
+    suffix = "",
+  ): Promise<void> {
+    const colorValues = [colors.left, colors.right, colors.middle]
+      .flatMap(color => [clampByte(color.r), clampByte(color.g), clampByte(color.b)]);
+    const command = `${action} ${colorValues.join(" ")}${suffix ? ` ${suffix}` : ""}`;
     return this.sendRaw(command);
   }
 

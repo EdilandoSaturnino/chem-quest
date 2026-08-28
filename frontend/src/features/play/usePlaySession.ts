@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { ChemicalElement } from "../../domain/elements/element";
-import { getSelectedElementsLiquidHue, hueToRgb } from "../../domain/elements/element-color";
+import { getSelectedElementsBottleColors } from "../../domain/elements/element-color";
 import { ELEMENTS } from "../../domain/elements/element-catalog";
 import type { Compound } from "../../domain/compounds/compound";
 import { compoundsByDifficulty } from "../../domain/compounds/compound-catalog";
@@ -92,11 +92,14 @@ export function usePlaySession({
 
     const syms = selectedIndices.map(i => ELEMENTS[i]!.sym);
     const brewElements = selectedIndices.map(i => ELEMENTS[i]!);
-    const brewColor = hueToRgb(getSelectedElementsLiquidHue(brewElements));
+    const bottleColors = getSelectedElementsBottleColors(brewElements);
+    const outcome: BrewOutcome = isChallenge && target
+      ? evaluateChallengeBrew(mode as ChallengeMode, syms, target)
+      : evaluateFreeBrew(syms);
 
     try {
       if (mode === "livre") {
-        await hardware.mix(brewColor);
+        await hardware.mix(bottleColors, isSuccessfulOutcome(outcome));
       } else {
         await new Promise(resolve => setTimeout(resolve, VIRTUAL_BREW_ANIMATION_MS));
       }
@@ -104,10 +107,6 @@ export function usePlaySession({
       setBrewing(false);
       return;
     }
-
-    const outcome: BrewOutcome = isChallenge && target
-      ? evaluateChallengeBrew(mode as ChallengeMode, syms, target)
-      : evaluateFreeBrew(syms);
 
     if (outcome.points > 0) onScoreGained(outcome.points);
     if (shouldLoseLife(outcome)) onLifeLost();
@@ -141,4 +140,8 @@ export function usePlaySession({
 
 function pickTarget(diff: ChallengeMode): Compound {
   return randomFrom(compoundsByDifficulty(diff));
+}
+
+function isSuccessfulOutcome(outcome: BrewOutcome): boolean {
+  return outcome.kind !== "challenge-miss" && outcome.kind !== "free-fizzle";
 }

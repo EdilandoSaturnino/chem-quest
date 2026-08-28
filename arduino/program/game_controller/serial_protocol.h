@@ -5,6 +5,7 @@
 enum class CommandType {
   None,
   Ping,
+  EnterFreeMode,
   Preview,
   Mix,
   Off,
@@ -13,7 +14,8 @@ enum class CommandType {
 
 struct SerialCommand {
   CommandType type = CommandType::None;
-  Config::RgbColor color = {0, 0, 0};
+  Config::BottleColors colors = {};
+  Config::MixOutcome outcome = Config::MixOutcome::Failure;
 };
 
 class SerialProtocol {
@@ -29,10 +31,14 @@ class SerialProtocol {
   static void sendFlowMisting();
   static void sendFlowDone();
   static void sendFlowAborted();
+  static void sendMp3BusyStartError(const char* soundName);
+  static void sendMp3BusyEndError(const char* soundName);
 
  private:
   bool parseBufferedCommand(SerialCommand& command);
-  static bool parseColor(const char* input, const char* action, Config::RgbColor& color);
+  static bool parseBottleColors(char* input, const char* action, Config::BottleColors& colors);
+  static bool parseMix(char* input, SerialCommand& command);
+  static bool parseColor(char*& cursor, Config::RgbColor& color);
 
   char buffer_[Config::kSerialCommandBufferSize] = {};
   uint8_t bufferLength_ = 0;
