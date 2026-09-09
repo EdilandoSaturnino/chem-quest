@@ -60,7 +60,7 @@ export function ResultModal({ outcome, message, onContinue, onBackToMenu }: Resu
           <Wizard size={80} intensity={0.6} />
           <div style={{ flex: 1 }}>
             <div style={{
-              fontSize: 10, letterSpacing: "0.3em",
+              fontSize: 14, letterSpacing: "0.3em",
               textTransform: "uppercase", marginBottom: 4, color: accent,
             }}>
               {ICONS[outcome.kind]} {TITLES[outcome.kind]}
@@ -80,7 +80,7 @@ export function ResultModal({ outcome, message, onContinue, onBackToMenu }: Resu
               +{outcome.points}
             </div>
             <div style={{
-              fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase",
+              fontSize: 14, letterSpacing: "0.22em", textTransform: "uppercase",
               color: "rgba(232,213,168,0.45)",
             }}>
               pontos

@@ -70,7 +70,7 @@ export function QuizScreen({
         lives={lives}
         extra={
           <div style={{
-            fontFamily: '"Cinzel", serif', fontSize: 14,
+            fontFamily: '"Cinzel", serif', fontSize: 17,
             color: "#d4af37", marginTop: 2,
           }}>
             {idx + 1} / {questions.length}
@@ -111,7 +111,7 @@ function QuestionPanel({ question, idx }: { question: QuizQuestion; idx: number 
       <Wizard size={200} />
       <div style={{ marginTop: 16, textAlign: "center", animation: "fade-up 0.4s ease-out" }}>
         <div style={{
-          fontFamily: '"Cinzel", serif', fontSize: 10,
+          fontFamily: '"Cinzel", serif', fontSize: 14,
           letterSpacing: "0.3em", textTransform: "uppercase",
           color: "rgba(232,213,168,0.5)", marginBottom: 8,
         }}>
@@ -172,7 +172,7 @@ function AnswerSection({
           onClick={onSubmit}
           disabled={picked == null}
           style={{
-            width: "100%", padding: 14, fontSize: 14,
+            width: "100%", padding: 14, fontSize: 17,
             animation: picked == null ? "none" : "pulse-aura 2.4s ease-in-out infinite",
           }}
         >
@@ -228,7 +228,7 @@ function AnswerOption({ sym, isPicked, isAnswer, showResult, onClick }: AnswerOp
           : showWrong ? "#f87171"
           : `hsl(${hue},${isPicked ? 85 : 60}%,${isPicked ? 80 : 65}%)`,
       }}>{sym}</span>
-      <span style={{ fontSize: 16, color: "rgba(232,213,168,0.7)" }}>
+      <span style={{ fontSize: 18, color: "rgba(232,213,168,0.7)" }}>
         {el?.real ?? sym}
       </span>
     </button>
@@ -257,17 +257,17 @@ function ResultPanel({ isCorrect, explain, streak, isLast, onNext }: ResultPanel
         <Wizard size={56} intensity={0.5} />
         <div style={{ flex: 1 }}>
           <div style={{
-            fontSize: 10, letterSpacing: "0.25em", textTransform: "uppercase",
+            fontSize: 14, letterSpacing: "0.25em", textTransform: "uppercase",
             marginBottom: 4, color: isCorrect ? "#10d96a" : "#f87171",
           }}>
             {isCorrect ? "✦ Correto!" : "✗ Errou — perdeu uma vida"}
           </div>
-          <p style={{ fontSize: 14, lineHeight: 1.4, margin: 0 }}>
+          <p style={{ fontSize: 17, lineHeight: 1.4, margin: 0 }}>
             {explain}
           </p>
           {isCorrect && streak > 1 && (
             <p style={{
-              fontSize: 12, fontStyle: "italic",
+              fontSize: 17, fontStyle: "italic",
               color: "rgba(232,213,168,0.55)", margin: "4px 0 0",
             }}>
               🔥 Sequência de {streak}!
@@ -275,7 +275,7 @@ function ResultPanel({ isCorrect, explain, streak, isLast, onNext }: ResultPanel
           )}
         </div>
       </div>
-      <GoldButton onClick={onNext} style={{ width: "100%", padding: 14, fontSize: 14 }}>
+      <GoldButton onClick={onNext} style={{ width: "100%", padding: 14, fontSize: 17 }}>
         {isLast ? "FINALIZAR" : "PRÓXIMA"}
       </GoldButton>
     </div>

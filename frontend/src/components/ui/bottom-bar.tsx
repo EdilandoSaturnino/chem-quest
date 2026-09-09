@@ -58,7 +58,7 @@ function EmptyState() {
     <div style={{
       display: "flex", alignItems: "center", justifyContent: "center",
       gap: 12, padding: "4px 0",
-      fontStyle: "italic", color: "rgba(232,213,168,0.45)", fontSize: 14,
+      fontStyle: "italic", color: "rgba(232,213,168,0.45)", fontSize: 17,
     }}>
       <MiniFlask hue={220} filled={false} />
       <span>Toque um elemento para começar a misturar.</span>
@@ -89,7 +89,7 @@ function FilledState({
         <MiniFlask hue={liquidHue} filled bubbling={brewing} />
         <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
           <div style={{
-            fontFamily: '"Cinzel", serif', fontSize: 10,
+            fontFamily: '"Cinzel", serif', fontSize: 14,
             letterSpacing: "0.22em", textTransform: "uppercase",
             fontWeight: 600, color: "rgba(232,213,168,0.65)",
           }}>
@@ -107,7 +107,7 @@ function FilledState({
                   border:      `1px solid hsla(${el.hue},65%,55%,0.55)`,
                   color:       `hsl(${el.hue},75%,82%)`,
                   fontFamily:  '"Cinzel", serif',
-                  padding: "2px 8px", borderRadius: 4, fontSize: 12,
+                  padding: "2px 8px", borderRadius: 4, fontSize: 15,
                 }}
               >
                 {el.sym}
@@ -138,7 +138,7 @@ function FilledState({
         disabled={brewing}
         style={{
           padding: "12px 28px",
-          fontSize: 13,
+          fontSize: 17,
           whiteSpace: "nowrap",
           animation: brewing ? "none" : "pulse-aura 2.4s ease-in-out infinite",
         }}

@@ -119,7 +119,7 @@ export function usePlaySession({
     setLastOutcome(null);
     setSelectedIndices([]);
     if (isChallenge) {
-      setTarget(pickTarget(mode as ChallengeMode));
+      setTarget(curr => pickTarget(mode as ChallengeMode, curr));
     }
   }, [isChallenge, mode]);
 
@@ -138,8 +138,12 @@ export function usePlaySession({
   };
 }
 
-function pickTarget(diff: ChallengeMode): Compound {
-  return randomFrom(compoundsByDifficulty(diff));
+function pickTarget(diff: ChallengeMode, previous?: Compound | null): Compound {
+  const pool = compoundsByDifficulty(diff);
+  if (!previous || pool.length < 2) return randomFrom(pool);
+  // Evita repetir a mesma missao duas vezes seguidas.
+  const others = pool.filter(c => c.name !== previous.name);
+  return randomFrom(others.length > 0 ? others : pool);
 }
 
 function isSuccessfulOutcome(outcome: BrewOutcome): boolean {

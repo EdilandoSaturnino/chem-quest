@@ -54,7 +54,7 @@ export function GameOverScreen({ score, mode, discoveredCount, onBack }: GameOve
             }}>
               Sua jornada termina aqui...
             </p>
-            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.4 }}>
+            <p style={{ margin: 0, fontSize: 17, lineHeight: 1.4 }}>
               Mas o conhecimento que você adquiriu permanece. Registre seu
               nome no <em>Hall da Fama</em>, jovem alquimista!
             </p>
@@ -63,7 +63,7 @@ export function GameOverScreen({ score, mode, discoveredCount, onBack }: GameOve
 
         <div style={{ textAlign: "center", marginBottom: 24 }}>
           <div style={{
-            fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase",
+            fontSize: 14, letterSpacing: "0.3em", textTransform: "uppercase",
             color: "rgba(232,213,168,0.45)", marginBottom: 4,
           }}>
             Pontuação Final
@@ -78,14 +78,14 @@ export function GameOverScreen({ score, mode, discoveredCount, onBack }: GameOve
           </div>
           {isPeriodicMode && discoveredCount !== undefined && (
             <div style={{
-              fontSize: 13, fontStyle: "italic",
+              fontSize: 17, fontStyle: "italic",
               color: "rgba(232,213,168,0.6)", marginTop: 8,
             }}>
               {discoveredCount} de 118 elementos descobertos
             </div>
           )}
           <div style={{
-            fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase",
+            fontSize: 15, letterSpacing: "0.22em", textTransform: "uppercase",
             color: "rgba(232,213,168,0.5)", marginTop: 8,
             fontFamily: '"Cinzel", serif',
           }}>
@@ -109,7 +109,7 @@ export function GameOverScreen({ score, mode, discoveredCount, onBack }: GameOve
             border: "1px solid rgba(16,217,106,0.4)",
             borderRadius: 8, marginBottom: 20,
             color: "#10d96a",
-            fontFamily: '"Cinzel", serif', fontSize: 13,
+            fontFamily: '"Cinzel", serif', fontSize: 17,
             letterSpacing: "0.2em", textTransform: "uppercase",
           }}>
             ✦ Nome registrado!
@@ -135,7 +135,7 @@ function NameInput({ name, onChange, onSave, canSave }: NameInputProps) {
   return (
     <div style={{ marginBottom: 20 }}>
       <label style={{
-        display: "block", fontSize: 10,
+        display: "block", fontSize: 14,
         letterSpacing: "0.25em", textTransform: "uppercase",
         color: "rgba(232,213,168,0.55)", marginBottom: 6,
         fontFamily: '"Cinzel", serif',
@@ -154,7 +154,7 @@ function NameInput({ name, onChange, onSave, canSave }: NameInputProps) {
             background: "rgba(20,14,8,0.85)",
             border: "1.5px solid rgba(212,175,55,0.4)",
             borderRadius: 6, color: "#e8d5a8",
-            fontSize: 15, fontFamily: '"Cinzel", serif',
+            fontSize: 17, fontFamily: '"Cinzel", serif',
             letterSpacing: "0.05em", outline: "none",
           }}
           onFocus={(e) => { e.currentTarget.style.borderColor = "#d4af37"; }}

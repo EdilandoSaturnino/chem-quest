@@ -49,6 +49,24 @@ export function GlobalStyles() {
         from { opacity: 0; transform: translateY(8px); }
         to   { opacity: 1; transform: translateY(0); }
       }
+      @keyframes mission-reveal {
+        0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+        10%  { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
+        18%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        55%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        100% { opacity: 0; transform: translate(-50%, calc(-50% - 40vh)) scale(0.26); }
+      }
+      @keyframes mission-veil {
+        0%   { opacity: 0; }
+        14%  { opacity: 1; }
+        55%  { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      @keyframes mission-land {
+        0%   { transform: scale(1); text-shadow: 0 0 12px rgba(212,175,55,0.4); }
+        45%  { transform: scale(1.14); text-shadow: 0 0 26px rgba(212,175,55,0.95); }
+        100% { transform: scale(1); text-shadow: 0 0 12px rgba(212,175,55,0.4); }
+      }
       @keyframes spin {
         to { transform: rotate(360deg); }
       }

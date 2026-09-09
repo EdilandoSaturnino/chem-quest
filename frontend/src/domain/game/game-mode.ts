@@ -19,7 +19,7 @@ export const MODE_CONFIG: Readonly<Record<GameMode, ModeConfig>> = {
   medium:    { title: "Médio",              emoji: "⚔️", desc: "Compostos com 3 elementos.",     accent: "#fbbf24" },
   hard:  { title: "Difícil",            emoji: "💀", desc: "Compostos com 4 elementos.",     accent: "#ef4444" },
   quiz:     { title: "Quiz",               emoji: "📜", desc: "Teste seus conhecimentos.",      accent: "#60a5fa" },
-  table:   { title: "Tabela Periódica",   emoji: "🧪", desc: "3 min para acertar o máximo.",   accent: "#f472b6" },
+  table:   { title: "Tabela Periódica",   emoji: "🧪", desc: "45s para acertar o máximo.",   accent: "#f472b6" },
   ranking:  { title: "Hall da Fama",       emoji: "👑", desc: "Veja os melhores.",              accent: "#facc15" },
 };
 

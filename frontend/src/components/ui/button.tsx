@@ -14,7 +14,7 @@ export function GoldButton({ children, style, disabled, ...rest }: ButtonProps) 
       style={{
         ...goldButtonStyle,
         padding: "10px 28px",
-        fontSize: 13,
+        fontSize: 17,
         ...(disabled && {
           background: "linear-gradient(180deg, #2a1f0a, #1a1006)",
           color: "#5a4a2a",
@@ -37,7 +37,7 @@ export function GhostButton({ children, style, ...rest }: ButtonProps) {
       style={{
         ...ghostButtonStyle,
         padding: "10px 20px",
-        fontSize: 13,
+        fontSize: 17,
         ...style,
       }}
     >

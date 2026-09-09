@@ -8,6 +8,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       background: theme.colors.bg,
       fontFamily: theme.fonts.body,
       color: theme.colors.text,
+      fontSize: 17,
       overflow: "hidden",
     }}>
       {children}

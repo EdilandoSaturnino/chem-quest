@@ -90,7 +90,7 @@ function RankRow({ entry, rank }: { entry: LeaderboardEntry; rank: number }) {
           {entry.name}
         </div>
         <div style={{
-          fontSize: 11, color: "rgba(232,213,168,0.45)",
+          fontSize: 15, color: "rgba(232,213,168,0.45)",
           letterSpacing: "0.15em", textTransform: "uppercase",
         }}>
           {MODE_CONFIG[entry.mode]?.title ?? entry.mode}
@@ -114,7 +114,7 @@ function ClearButton({ onClear }: { onClear: () => void }) {
         marginTop: 20, padding: "8px 16px", borderRadius: 6,
         background: "transparent", border: "1px solid rgba(248,113,113,0.4)",
         color: "rgba(248,113,113,0.7)",
-        fontFamily: '"Cinzel", serif', fontSize: 11,
+        fontFamily: '"Cinzel", serif', fontSize: 15,
         letterSpacing: "0.2em", textTransform: "uppercase",
         alignSelf: "center", cursor: "pointer",
       }}

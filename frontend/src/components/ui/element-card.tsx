@@ -47,7 +47,7 @@ export function ElementCard({
     >
       <span style={{
         position: "absolute", top: 6, left: 8,
-        fontSize: 10, opacity: 0.5,
+        fontSize: 14, opacity: 0.5,
         color: selected ? `hsl(${el.hue},60%,80%)` : "#d4af37",
       }}>
         {el.num}
@@ -71,7 +71,7 @@ export function ElementCard({
         {el.sym}
       </span>
       <span style={{
-        fontSize: 12, lineHeight: 1.1, textAlign: "center",
+        fontSize: 17, lineHeight: 1.1, textAlign: "center",
         color: selected ? `hsl(${el.hue},45%,82%)` : "rgba(232,213,168,0.55)",
       }}>
         {el.real}

@@ -598,6 +598,516 @@ export const COMPOUNDS: readonly Compound[] = [
     ],
     fact: "É a crosta branca no fundo da chaleira: o calor o quebra e o sólido se deposita.",
   },
+
+
+  {
+    name: "Tetracloreto de Carbono", formula: "CCl₄", els: ["C", "Cl"], diff: "easy",
+    hints: [
+      "Foi o líquido dos extintores antigos.",
+      "Solvente que tirava mancha de gordura da roupa.",
+      "Hoje é proibido: ataca a camada de ozônio.",
+    ],
+    fact: "Usado em extintores até descobrirem que, no calor, virava um gás venenoso.",
+  },
+  {
+    name: "Dissulfeto de Carbono", formula: "CS₂", els: ["C", "S"], diff: "easy",
+    hints: [
+      "Líquido fedorento que pega fogo fácil demais.",
+      "Serviu para fabricar o rayon, a 'seda artificial'.",
+      "Um dos solventes mais perigosos do laboratório.",
+    ],
+    fact: "Pega fogo só de encostar num cano quente — nem precisa de faísca.",
+  },
+  {
+    name: "Hidreto de Cálcio", formula: "CaH₂", els: ["Ca", "H"], diff: "easy",
+    hints: [
+      "Pó cinza que reage violentamente com água.",
+      "Militares o usavam para encher balões em campo.",
+      "Serve para secar solventes de laboratório.",
+    ],
+    fact: "Jogado na água, solta hidrogênio puro — era o gerador de balão portátil do exército.",
+  },
+  {
+    name: "Sulfeto de Cálcio", formula: "CaS", els: ["Ca", "S"], diff: "easy",
+    hints: [
+      "Brilha no escuro depois de tomar luz.",
+      "Foi a primeira tinta fosforescente.",
+      "Subproduto fedorento da indústria do papel.",
+    ],
+    fact: "A primeira tinta que brilhava no escuro da história era feita com ele.",
+  },
+  {
+    name: "Nitreto de Cálcio", formula: "Ca₃N₂", els: ["Ca", "N"], diff: "easy",
+    hints: [
+      "Nasce quando um metal queima ao ar livre.",
+      "Pó marrom-avermelhado.",
+      "Com água, solta um gás de cheiro forte.",
+    ],
+    fact: "Quando o cálcio queima no ar, parte dele reage com o nitrogênio, não com o oxigênio.",
+  },
+  {
+    name: "Tricloreto de Nitrogênio", formula: "NCl₃", els: ["N", "Cl"], diff: "easy",
+    hints: [
+      "Óleo amarelo que explode ao menor toque.",
+      "É o cheiro forte de piscina coberta.",
+      "Já foi usado para clarear farinha.",
+    ],
+    fact: "O cheiro de piscina fechada é ele: nasce do cloro reagindo com o suor.",
+  },
+  {
+    name: "Dióxido de Cloro", formula: "ClO₂", els: ["Cl", "O"], diff: "easy",
+    hints: [
+      "Gás amarelado que trata água de cidade inteira.",
+      "Também clareia papel sem agredir tanto.",
+      "Explode se for comprimido.",
+    ],
+    fact: "Foi usado para descontaminar prédios inteiros depois de ataques com antraz.",
+  },
+  {
+    name: "Cloreto de Enxofre", formula: "S₂Cl₂", els: ["S", "Cl"], diff: "easy",
+    hints: [
+      "Líquido âmbar de cheiro insuportável.",
+      "Sem ele o pneu não endurece.",
+      "Peça-chave da vulcanização.",
+    ],
+    fact: "É o que transforma borracha mole em pneu resistente.",
+  },
+  {
+    name: "Nitreto de Ferro", formula: "Fe₄N", els: ["Fe", "N"], diff: "easy",
+    hints: [
+      "Casca dura na superfície de engrenagens.",
+      "Deixa a peça resistente sem deixá-la quebradiça.",
+      "Nasce num forno cheio de amônia.",
+    ],
+    fact: "Engrenagens de carro ganham uma casca dele para durar muito mais.",
+  },
+  {
+    name: "Hidreto de Potássio", formula: "KH", els: ["K", "H"], diff: "easy",
+    hints: [
+      "Pó branco que pega fogo no ar úmido.",
+      "Uma das bases mais fortes que existem.",
+      "Guardado submerso em óleo.",
+    ],
+    fact: "Tão reativo que arranca hidrogênio de moléculas que ninguém mais consegue.",
+  },
+  {
+    name: "Hidreto de Magnésio", formula: "MgH₂", els: ["Mg", "H"], diff: "easy",
+    hints: [
+      "Candidato a tanque de combustível do futuro.",
+      "Guarda gás dentro de um pó sólido.",
+      "Solta o gás quando aquecido.",
+    ],
+    fact: "Guarda mais hidrogênio por litro que o próprio hidrogênio líquido.",
+  },
+  {
+    name: "Hidreto de Sódio", formula: "NaH", els: ["Na", "H"], diff: "easy",
+    hints: [
+      "Pó cinza guardado em óleo mineral.",
+      "Rouba hidrogênio de quase tudo.",
+      "Com água, faz um chiado perigoso.",
+    ],
+    fact: "Reage com água tão rápido que o próprio calor acende o gás liberado.",
+  },
+  {
+    name: "Superóxido de Potássio", formula: "KO₂", els: ["K", "O"], diff: "easy",
+    hints: [
+      "Pó amarelo que fabrica ar respirável.",
+      "Vai em submarinos e naves espaciais.",
+      "Come gás carbônico e devolve oxigênio.",
+    ],
+    fact: "Astronautas respiram graças a ele: absorve o CO₂ exalado e libera O₂.",
+  },
+  {
+    name: "Sulfeto de Potássio", formula: "K₂S", els: ["K", "S"], diff: "easy",
+    hints: [
+      "Usado para envelhecer metal de propósito.",
+      "Dá aquele escurecido nos detalhes de joia.",
+      "Cheira a ovo podre quando molhado.",
+    ],
+    fact: "Joalheiros o usam para escurecer prata e fazer os relevos saltarem aos olhos.",
+  },
+  {
+    name: "Nitreto de Magnésio", formula: "Mg₃N₂", els: ["Mg", "N"], diff: "easy",
+    hints: [
+      "Pó amarelo-esverdeado.",
+      "Aparece quando um metal queima ao ar.",
+      "Prova que o nitrogênio nem sempre é preguiçoso.",
+    ],
+    fact: "Queimar magnésio não dá só pó branco: parte vira este nitreto amarelado.",
+  },
+  {
+    name: "Sulfeto de Magnésio", formula: "MgS", els: ["Mg", "S"], diff: "easy",
+    hints: [
+      "Aparece dentro de estrelas e meteoritos.",
+      "Usado para limpar impurezas do aço.",
+      "Cristais avermelhados.",
+    ],
+    fact: "É mais comum no espaço do que na Terra: foi achado dentro de meteoritos.",
+  },
+  {
+    name: "Peróxido de Sódio", formula: "Na₂O₂", els: ["Na", "O"], diff: "easy",
+    hints: [
+      "Pó amarelado que gera oxigênio.",
+      "Salvou tripulações presas debaixo d'água.",
+      "Com água, ferve e libera gás.",
+    ],
+    fact: "Submarinos antigos carregavam latas dele para não faltar ar à tripulação.",
+  },
+  {
+    name: "Sulfeto de Sódio", formula: "Na₂S", els: ["Na", "S"], diff: "easy",
+    hints: [
+      "Tira o pelo do couro no curtume.",
+      "Cheiro que se sente a quarteirões de distância.",
+      "Também usado no tratamento de esgoto.",
+    ],
+    fact: "É ele que arranca o pelo do couro antes de virar bolsa ou sapato.",
+  },
+  {
+    name: "Azida de Sódio", formula: "NaN₃", els: ["Na", "N"], diff: "easy",
+    hints: [
+      "Está escondido no volante do seu carro.",
+      "Vira gás em milésimos de segundo.",
+      "Salva vidas explodindo.",
+    ],
+    fact: "O airbag infla porque ele se decompõe em gás nitrogênio em 30 milissegundos.",
+  },
+  {
+    name: "Cianogênio", formula: "C₂N₂", els: ["C", "N"], diff: "easy",
+    hints: [
+      "Gás incolor com cheiro de amêndoa.",
+      "Queima com uma das chamas mais quentes que existem.",
+      "Já foi detectado na cauda de cometas.",
+    ],
+    fact: "Sua chama passa de 4.500 °C — das mais quentes que a química consegue produzir.",
+  },
+
+
+  {
+    name: "Nitrato de Cálcio", formula: "Ca(NO₃)₂", els: ["Ca", "N", "O"], diff: "medium",
+    hints: [
+      "Fertilizante que a planta absorve na hora.",
+      "Evita que o tomate apodreça pelo fundo.",
+      "Queridinho do cultivo sem terra.",
+    ],
+    fact: "É o adubo que impede a mancha preta no fundo do tomate, a podridão apical.",
+  },
+  {
+    name: "Nitrato de Magnésio", formula: "Mg(NO₃)₂", els: ["Mg", "N", "O"], diff: "medium",
+    hints: [
+      "Adubo que combate folha amarelada.",
+      "Puxa umidade do ar com facilidade.",
+      "Também entra em fogos coloridos.",
+    ],
+    fact: "Folha amarela com nervura ainda verde é o sinal clássico de que falta esse metal.",
+  },
+  {
+    name: "Nitrato de Ferro", formula: "Fe(NO₃)₃", els: ["Fe", "N", "O"], diff: "medium",
+    hints: [
+      "Cristais violeta-claros que atraem água.",
+      "Serve para gravar desenho em metal.",
+      "Tinge tecido de preto profundo.",
+    ],
+    fact: "Joalheiros o usam para gravar prata sem precisar de nenhuma máquina.",
+  },
+  {
+    name: "Carbonato de Cobre", formula: "CuCO₃", els: ["Cu", "C", "O"], diff: "medium",
+    hints: [
+      "Verde vivo de mineral precioso.",
+      "Já foi moído para virar tinta de pintor.",
+      "Tem a ver com a cor das estátuas antigas.",
+    ],
+    fact: "Pintores da Renascença moíam malaquita, feita dele, para conseguir verde brilhante.",
+  },
+  {
+    name: "Cianeto de Potássio", formula: "KCN", els: ["K", "C", "N"], diff: "medium",
+    hints: [
+      "O veneno dos filmes de espionagem.",
+      "Cheiro de amêndoa amarga.",
+      "Também arranca ouro da rocha.",
+    ],
+    fact: "O veneno famoso dos filmes é o mesmo que dissolve ouro em minas do mundo todo.",
+  },
+  {
+    name: "Cianeto de Sódio", formula: "NaCN", els: ["Na", "C", "N"], diff: "medium",
+    hints: [
+      "Dissolve ouro que ácido comum nem arranha.",
+      "Pó branco altamente tóxico.",
+      "Base da mineração moderna.",
+    ],
+    fact: "Mais de 80% do ouro extraído no mundo passa por ele.",
+  },
+  {
+    name: "Cianeto de Cobre", formula: "CuCN", els: ["Cu", "C", "N"], diff: "medium",
+    hints: [
+      "Pó esverdeado usado em banho de metal.",
+      "Dá acabamento perfeitamente uniforme.",
+      "Muito tóxico e pouco solúvel.",
+    ],
+    fact: "Torneiras e maçanetas ganham cobertura metálica lisa graças a ele.",
+  },
+  {
+    name: "Cianamida Cálcica", formula: "CaCN₂", els: ["Ca", "C", "N"], diff: "medium",
+    hints: [
+      "Adubo escuro apelidado de 'nitrolim'.",
+      "Aduba e mata erva daninha ao mesmo tempo.",
+      "Feito em forno elétrico com o ar como matéria-prima.",
+    ],
+    fact: "Foi o primeiro jeito industrial de transformar o nitrogênio do ar em adubo.",
+  },
+  {
+    name: "Hidróxido de Cobre", formula: "Cu(OH)₂", els: ["Cu", "O", "H"], diff: "medium",
+    hints: [
+      "Gel azul-celeste que se forma na hora.",
+      "Fungicida clássico das plantações.",
+      "Com calor, vira pó preto.",
+    ],
+    fact: "É a base da calda bordalesa, que salvou as videiras da Europa de um fungo devastador.",
+  },
+  {
+    name: "Amideto de Sódio", formula: "NaNH₂", els: ["Na", "N", "H"], diff: "medium",
+    hints: [
+      "Pó branco que ataca vidro e pele.",
+      "Base fortíssima de laboratório.",
+      "Se envelhecer no frasco, pode explodir sozinho.",
+    ],
+    fact: "Frascos velhos dele são descartados com cuidado extremo: envelhecem virando explosivo.",
+  },
+  {
+    name: "Ácido Cianídrico", formula: "HCN", els: ["H", "C", "N"], diff: "medium",
+    hints: [
+      "Gás com cheiro de amêndoa que muita gente não sente.",
+      "Existe no caroço de algumas frutas.",
+      "Um dos venenos mais rápidos conhecidos.",
+    ],
+    fact: "Cerca de 40% das pessoas não conseguem sentir seu cheiro — é uma questão genética.",
+  },
+  {
+    name: "Cloreto de Nitrosila", formula: "NOCl", els: ["N", "O", "Cl"], diff: "medium",
+    hints: [
+      "Gás amarelo que nasce na 'água régia'.",
+      "Ajuda a dissolver o metal mais nobre de todos.",
+      "Ataca até a platina.",
+    ],
+    fact: "É o gás que dá à água régia o poder de dissolver ouro.",
+  },
+  {
+    name: "Cloreto de Tionila", formula: "SOCl₂", els: ["S", "O", "Cl"], diff: "medium",
+    hints: [
+      "Líquido que solta fumaça ao abrir o frasco.",
+      "Transforma álcool em outra coisa na hora.",
+      "Vai dentro de pilhas de longuíssima duração.",
+    ],
+    fact: "Pilhas de marca-passo e sensores duram uma década por causa dele.",
+  },
+  {
+    name: "Ácido Hipocloroso", formula: "HClO", els: ["H", "Cl", "O"], diff: "medium",
+    hints: [
+      "É o que de fato desinfeta a piscina.",
+      "Seu próprio corpo também o fabrica.",
+      "Instável: some rápido.",
+    ],
+    fact: "Seus glóbulos brancos produzem esse mesmo ácido para matar bactérias.",
+  },
+  {
+    name: "Sulfeto de Amônio", formula: "(NH₄)₂S", els: ["N", "H", "S"], diff: "medium",
+    hints: [
+      "Base das bombinhas de mau cheiro.",
+      "Solução amarela de odor insuportável.",
+      "Usado para revelar metais em análise.",
+    ],
+    fact: "É o líquido das clássicas 'bombas de fedor' vendidas em loja de pegadinha.",
+  },
+  {
+    name: "Hidrogenossulfeto de Sódio", formula: "NaHS", els: ["Na", "H", "S"], diff: "medium",
+    hints: [
+      "Depila o couro no curtume.",
+      "Escamas amarelas que fedem muito.",
+      "Também usado na mineração de cobre.",
+    ],
+    fact: "Separa o cobre da rocha fazendo o mineral grudar em bolhas de ar.",
+  },
+  {
+    name: "Hidrogenossulfeto de Potássio", formula: "KHS", els: ["K", "H", "S"], diff: "medium",
+    hints: [
+      "Cristais com cheiro de ovo podre.",
+      "Reagente clássico de análise química.",
+      "Absorve umidade do ar num piscar.",
+    ],
+    fact: "Basta abrir o frasco no ar úmido para ele começar a se desfazer sozinho.",
+  },
+
+
+  {
+    name: "Tiocianato de Potássio", formula: "KSCN", els: ["K", "S", "C", "N"], diff: "hard",
+    hints: [
+      "Faz o sangue falso do cinema.",
+      "Fica vermelho-sangue ao encontrar certo metal.",
+      "Reagente clássico de teste.",
+    ],
+    fact: "Misturado com sal de ferro, vira o sangue falso usado em filmes e no teatro.",
+  },
+  {
+    name: "Tiocianato de Sódio", formula: "NaSCN", els: ["Na", "S", "C", "N"], diff: "hard",
+    hints: [
+      "Cristais que sugam água do ar.",
+      "Dissolve fibras têxteis resistentes.",
+      "Também usado como herbicida.",
+    ],
+    fact: "Dissolve fibras que aguentam água fervente — por isso é usado em tecido sintético.",
+  },
+  {
+    name: "Tioureia", formula: "CH₄N₂S", els: ["C", "H", "N", "S"], diff: "hard",
+    hints: [
+      "Tira ferrugem de peça antiga.",
+      "Parece um composto do xixi, mas com enxofre no lugar.",
+      "Usada na revelação de fotografias.",
+    ],
+    fact: "É a ureia com o oxigênio trocado por enxofre — e isso muda toda a química dela.",
+  },
+  {
+    name: "Cianato de Sódio", formula: "NaOCN", els: ["Na", "O", "C", "N"], diff: "hard",
+    hints: [
+      "Pó branco que endurece aço.",
+      "Já foi testado contra doença do sangue.",
+      "Parente bem menos perigoso de um veneno famoso.",
+    ],
+    fact: "Difere do cianeto por um único átomo de oxigênio — e é muitíssimo menos tóxico.",
+  },
+  {
+    name: "Cianato de Potássio", formula: "KOCN", els: ["K", "O", "C", "N"], diff: "hard",
+    hints: [
+      "Herbicida e endurecedor de metal.",
+      "Foi peça central de um experimento que mudou a ciência.",
+      "Cristais incolores solúveis em água.",
+    ],
+    fact: "Wöhler o usou em 1828 para criar ureia e derrubar a ideia de 'força vital'.",
+  },
+  {
+    name: "Cloreto de Ferro Hexaidratado", formula: "FeCl₃·6H₂O", els: ["Fe", "Cl", "H", "O"], diff: "hard",
+    hints: [
+      "Cristais alaranjados que derretem sozinhos.",
+      "Come a placa e deixa só o desenho do circuito.",
+      "Também clareia água suja.",
+    ],
+    fact: "Quem monta circuito em casa o usa para 'comer' o cobre e deixar só as trilhas.",
+  },
+  {
+    name: "Oxicloreto de Cobre", formula: "Cu₂Cl(OH)₃", els: ["Cu", "Cl", "O", "H"], diff: "hard",
+    hints: [
+      "Pó verde pulverizado na lavoura.",
+      "Protege videira e batata de fungo.",
+      "Na natureza é o mineral atacamita.",
+    ],
+    fact: "É o fungicida verde que você já viu pintando as folhas de plantações inteiras.",
+  },
+  {
+    name: "Cloreto de Cálcio Diidratado", formula: "CaCl₂·2H₂O", els: ["Ca", "Cl", "H", "O"], diff: "hard",
+    hints: [
+      "Derrete o gelo da estrada no inverno.",
+      "É o 'anti-mofo' de armário.",
+      "Esquenta ao encostar na água.",
+    ],
+    fact: "Aqueles saquinhos que secam o guarda-roupa são ele puxando água do ar.",
+  },
+  {
+    name: "Bissulfato de Potássio", formula: "KHSO₄", els: ["K", "H", "S", "O"], diff: "hard",
+    hints: [
+      "Ácido em forma de pó seco.",
+      "Abre minérios que resistem a tudo.",
+      "Derretido, ataca a rocha.",
+    ],
+    fact: "Fundido, dissolve minérios que nem ácido concentrado consegue atacar.",
+  },
+  {
+    name: "Nitrato de Cálcio Tetraidratado", formula: "Ca(NO₃)₂·4H₂O", els: ["Ca", "N", "O", "H"], diff: "hard",
+    hints: [
+      "Adubo que derrete no próprio suor.",
+      "Estrela do cultivo hidropônico.",
+      "Cristais que somem no ar úmido.",
+    ],
+    fact: "É tão ávido por água que se dissolve sozinho na umidade do ar.",
+  },
+  {
+    name: "Nitrato de Magnésio Hexaidratado", formula: "Mg(NO₃)₂·6H₂O", els: ["Mg", "N", "O", "H"], diff: "hard",
+    hints: [
+      "Adubo que também seca outras substâncias.",
+      "Cristais incolores sedentos por umidade.",
+      "Usado no refino de um ácido forte.",
+    ],
+    fact: "Serve para concentrar ácido nítrico, roubando a água da mistura.",
+  },
+  {
+    name: "Nitrato de Ferro Nonaidratado", formula: "Fe(NO₃)₃·9H₂O", els: ["Fe", "N", "O", "H"], diff: "hard",
+    hints: [
+      "Cristais violeta-pálidos.",
+      "Grava desenho em metal.",
+      "Envelhece madeira sem tinta nenhuma.",
+    ],
+    fact: "Pincelado na madeira, ele a envelhece em minutos sem usar nenhum pigmento.",
+  },
+  {
+    name: "Cianocuprato de Potássio", formula: "K₃[Cu(CN)₄]", els: ["K", "Cu", "C", "N"], diff: "hard",
+    hints: [
+      "Banho que deixa a peça com brilho de espelho.",
+      "Junta cianeto a um metal avermelhado.",
+      "Vem antes da cromagem.",
+    ],
+    fact: "É a primeira camada de quase toda peça cromada — sem ela o cromo não gruda.",
+  },
+  {
+    name: "Tiocianato de Ferro", formula: "Fe(SCN)₃", els: ["Fe", "S", "C", "N"], diff: "hard",
+    hints: [
+      "Vermelho-sangue instantâneo.",
+      "Demonstração clássica de aula de química.",
+      "Denuncia ferrugem escondida.",
+    ],
+    fact: "A cor surge tão intensa que revela ferro em quantidade quase invisível.",
+  },
+  {
+    name: "Langbeinita", formula: "K₂Mg₂(SO₄)₃", els: ["K", "Mg", "S", "O"], diff: "hard",
+    hints: [
+      "Mineral que aduba com três nutrientes de uma vez.",
+      "Não queima a raiz da planta.",
+      "Extraído de mares que secaram.",
+    ],
+    fact: "Vem do fundo de mares que evaporaram há milhões de anos.",
+  },
+  {
+    name: "Bloedita", formula: "Na₂Mg(SO₄)₂", els: ["Na", "Mg", "S", "O"], diff: "hard",
+    hints: [
+      "Sal duplo de lagos salgados.",
+      "Aparece quando a lagoa evapora.",
+      "Já foi farejado em outro planeta.",
+    ],
+    fact: "Sondas encontraram sinais dele em Marte — pista de que houve água por lá.",
+  },
+  {
+    name: "Singenita", formula: "K₂Ca(SO₄)₂", els: ["K", "Ca", "S", "O"], diff: "hard",
+    hints: [
+      "Cresce na boca de vulcão.",
+      "Também entope tubulação de fábrica.",
+      "Cristais transparentes e finos.",
+    ],
+    fact: "Forma-se nas fumarolas do Vesúvio, direto do vapor quente que sai da terra.",
+  },
+  {
+    name: "Carnalita", formula: "KMgCl₃·6H₂O", els: ["K", "Mg", "Cl", "H"], diff: "hard",
+    hints: [
+      "Mineral que derrete só com a umidade do ar.",
+      "Fonte de adubo desde o século XIX.",
+      "Brilha alaranjado sob a luz.",
+    ],
+    fact: "Deixado no ar, o mineral vira poça sozinho — sem ninguém encostar.",
+  },
+  {
+    name: "Nitrato de Cobre Triidratado", formula: "Cu(NO₃)₂·3H₂O", els: ["Cu", "N", "O", "H"], diff: "hard",
+    hints: [
+      "Cristais azuis que fazem papel pegar fogo.",
+      "Dá pátina verde em metal.",
+      "Pinta a chama de verde.",
+    ],
+    fact: "Embrulhado em papel alumínio úmido, esquenta até incendiar sozinho.",
+  },
 ];
 
 

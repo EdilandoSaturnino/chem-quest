@@ -22,7 +22,7 @@ export function TopBar({ onBack, modeLabel, score, lives, extra }: TopBarProps) 
 
       <div style={{ textAlign: "center", flex: 1 }}>
         <div style={{
-          fontSize: 11, letterSpacing: "0.25em", textTransform: "uppercase",
+          fontSize: 15, letterSpacing: "0.25em", textTransform: "uppercase",
           color: "rgba(232,213,168,0.55)",
         }}>
           {modeLabel}
@@ -60,7 +60,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
     >
       <span style={{ fontSize: 18 }}>←</span>
       <span style={{
-        fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase",
+        fontSize: 15, letterSpacing: "0.2em", textTransform: "uppercase",
         fontFamily: '"Cinzel", serif',
       }}>
         Menu
@@ -73,7 +73,7 @@ function ScoreDisplay({ score }: { score: number }) {
   return (
     <div style={{ display: "flex", alignItems: "baseline", gap: 6, fontFamily: '"Cinzel", serif' }}>
       <span style={{
-        color: "rgba(232,213,168,0.4)", fontSize: 10,
+        color: "rgba(232,213,168,0.4)", fontSize: 14,
         letterSpacing: "0.25em", textTransform: "uppercase",
       }}>Score</span>
       <span style={{

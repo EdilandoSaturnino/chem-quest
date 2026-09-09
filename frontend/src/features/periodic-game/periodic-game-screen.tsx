@@ -7,8 +7,21 @@ import {
 } from "../../domain/periodic/periodic-table";
 import { useCountdown } from "../../hooks/useCountdown";
 
-const TOTAL_TIME    = 180;
+const TOTAL_TIME    = 45;
 const POINTS_EACH   = 10;
+const STARTER_COUNT = 8;
+
+
+function pickStarters(count: number): number[] {
+  const nums = PERIODIC_ELEMENTS.map(e => e.num);
+  for (let i = nums.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = nums[i]!;
+    nums[i] = nums[j]!;
+    nums[j] = tmp;
+  }
+  return nums.slice(0, count);
+}
 
 interface PeriodicGameScreenProps {
   onBack: () => void;
@@ -18,7 +31,8 @@ interface PeriodicGameScreenProps {
 type Feedback = { kind: "ok" | "dup" | "no"; text: string };
 
 export function PeriodicGameScreen({ onBack, onFinished }: PeriodicGameScreenProps) {
-  const [discovered, setDiscovered] = useState<Set<number>>(() => new Set());
+  const [starters] = useState<Set<number>>(() => new Set(pickStarters(STARTER_COUNT)));
+  const [discovered, setDiscovered] = useState<Set<number>>(() => new Set(starters));
   const [input,      setInput]      = useState("");
   const [feedback,   setFeedback]   = useState<Feedback | null>(null);
   const [running,    setRunning]    = useState(true);
@@ -28,12 +42,15 @@ export function PeriodicGameScreen({ onBack, onFinished }: PeriodicGameScreenPro
 
   const onTimeout = useRef<() => void>(() => {});
 
+
+  const earned = Math.max(0, discovered.size - starters.size);
+
   useEffect(() => {
     onTimeout.current = () => {
       setRunning(false);
-      onFinished({ score: discovered.size * POINTS_EACH, discoveredCount: discovered.size });
+      onFinished({ score: earned * POINTS_EACH, discoveredCount: earned });
     };
-  }, [discovered.size, onFinished]);
+  }, [earned, onFinished]);
 
   const { formatted, isLow } = useCountdown({
     totalSeconds: TOTAL_TIME,
@@ -81,8 +98,8 @@ export function PeriodicGameScreen({ onBack, onFinished }: PeriodicGameScreenPro
         onBack={onBack}
         timeStr={formatted}
         timeIsLow={isLow}
-        discoveredCount={discovered.size}
-        score={discovered.size * POINTS_EACH}
+        discoveredCount={earned}
+        score={earned * POINTS_EACH}
       />
 
       <InputRow
@@ -94,7 +111,7 @@ export function PeriodicGameScreen({ onBack, onFinished }: PeriodicGameScreenPro
       />
 
       <main style={{ flex: 1, padding: "8px 16px 16px", overflow: "auto" }} className="scrollbar">
-        <PeriodicGrid discovered={discovered} />
+        <PeriodicGrid discovered={discovered} starters={starters} />
       </main>
     </div>
   );
@@ -130,7 +147,7 @@ function PeriodicTopBar({
       >
         <span style={{ fontSize: 18 }}>←</span>
         <span style={{
-          fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase",
+          fontSize: 15, letterSpacing: "0.2em", textTransform: "uppercase",
           fontFamily: '"Cinzel", serif',
         }}>Menu</span>
       </button>
@@ -145,7 +162,7 @@ function PeriodicTopBar({
         />
         <Stat
           label="Acertos"
-          value={<><span>{discoveredCount}</span><span style={{ fontSize: 14, color: "rgba(232,213,168,0.4)" }}>/118</span></>}
+          value={<><span>{discoveredCount}</span><span style={{ fontSize: 17, color: "rgba(232,213,168,0.4)" }}>/118</span></>}
           color="#10d96a"
         />
         <Stat label="Score" value={score} color="#d4af37" />
@@ -166,7 +183,7 @@ function Stat({
   return (
     <div style={{ textAlign: "center" }}>
       <div style={{
-        fontSize: 9, letterSpacing: "0.25em", textTransform: "uppercase",
+        fontSize: 13, letterSpacing: "0.25em", textTransform: "uppercase",
         color: "rgba(232,213,168,0.45)",
       }}>{label}</div>
       <div style={{
@@ -217,7 +234,7 @@ function InputRow({ inputRef, value, onChange, onSubmit, feedback }: InputRowPro
           <div style={{
             position: "absolute", top: "100%", left: 0, right: 0,
             textAlign: "center", marginTop: 6,
-            fontSize: 13, fontWeight: 600,
+            fontSize: 17, fontWeight: 600,
             fontFamily: '"Cinzel", serif', letterSpacing: "0.1em",
             color: feedback.kind === "ok" ? "#10d96a"
               : feedback.kind === "dup" ? "#fbbf24"
@@ -232,7 +249,7 @@ function InputRow({ inputRef, value, onChange, onSubmit, feedback }: InputRowPro
   );
 }
 
-function PeriodicGrid({ discovered }: { discovered: Set<number> }) {
+function PeriodicGrid({ discovered, starters }: { discovered: Set<number>; starters: Set<number> }) {
   return (
     <div style={{
       display: "grid",
@@ -243,34 +260,39 @@ function PeriodicGrid({ discovered }: { discovered: Set<number> }) {
     }}>
       {PERIODIC_ELEMENTS.map((p) => {
         const isDiscovered = discovered.has(p.num);
+        const isGiven = starters.has(p.num);
         const hue = CATEGORY_HUE[p.cat];
         return (
           <div key={p.num} style={{
             gridRow: p.row, gridColumn: p.col,
-            background: isDiscovered
+            background: isGiven
+              ? `linear-gradient(160deg, hsla(${hue},30%,18%,0.9), hsla(${hue},35%,10%,0.9))`
+              : isDiscovered
               ? `linear-gradient(160deg, hsla(${hue},65%,30%,0.95), hsla(${hue},80%,16%,0.95))`
               : "rgba(20,14,8,0.5)",
-            border: isDiscovered
+            border: isGiven
+              ? `1px dashed hsla(${hue},45%,55%,0.45)`
+              : isDiscovered
               ? `1px solid hsla(${hue},85%,65%,0.85)`
               : "1px solid rgba(212,175,55,0.08)",
             borderRadius: 4,
             display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center",
             padding: 2, position: "relative",
-            boxShadow: isDiscovered ? `0 0 8px hsla(${hue},85%,55%,0.4)` : "none",
+            boxShadow: isDiscovered && !isGiven ? `0 0 8px hsla(${hue},85%,55%,0.4)` : "none",
             transition: "all 0.4s",
           }}>
             {isDiscovered ? (
               <>
                 <span style={{
                   position: "absolute", top: 1, left: 3,
-                  fontSize: 8, color: `hsl(${hue},60%,80%)`, opacity: 0.7,
+                  fontSize: 10, color: `hsl(${hue},60%,80%)`, opacity: 0.7,
                 }}>{p.num}</span>
                 <span style={{
                   fontFamily: '"Cinzel", serif', fontWeight: 700,
                   fontSize: "clamp(10px, 1.1vw, 16px)",
-                  color: `hsl(${hue},85%,82%)`,
-                  textShadow: `0 0 8px hsl(${hue},80%,55%)`,
+                  color: isGiven ? `hsl(${hue},35%,58%)` : `hsl(${hue},85%,82%)`,
+                  textShadow: isGiven ? "none" : `0 0 8px hsl(${hue},80%,55%)`,
                 }}>{p.sym}</span>
               </>
             ) : (
