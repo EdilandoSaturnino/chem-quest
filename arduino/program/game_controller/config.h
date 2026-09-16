@@ -39,26 +39,11 @@ constexpr uint8_t kRightLedCount = 7;
 constexpr uint8_t kLoadingSegmentLedCount = 3;
 constexpr unsigned long kLoadingStepIntervalMs = 125UL;
 
-constexpr uint8_t kMp3BusyPin = 2;
-constexpr uint8_t kMp3BusyPlayingLevel = LOW;
-constexpr uint8_t kMp3BusyIdleLevel = HIGH;
-
-constexpr uint8_t kMp3RxPin = 9;
-constexpr uint8_t kMp3TxPin = 8;
 constexpr unsigned long kWebSerialBaudRate = 9600UL;
-constexpr unsigned long kMp3BaudRate = 9600UL;
-constexpr uint8_t kMp3Volume = 30;
-constexpr bool kMp3UseAcknowledgement = true;
-constexpr bool kMp3ResetOnBegin = false;
 
-constexpr unsigned long kMp3StartupDelayMs = 1500UL;
-constexpr unsigned long kMp3CommandGuardMs = 500UL;
-constexpr unsigned long kMp3BusyStartTimeoutMs = 2000UL;
-constexpr unsigned long kMp3BusyEndTimeoutMs = 15000UL;
-constexpr unsigned long kMp3BusyStartDebounceMs = 50UL;
-constexpr unsigned long kMp3BusyEndDebounceMs = 1000UL;
-constexpr unsigned long kPumpDurationMs = 5000UL;
-constexpr unsigned long kSideBottleLoadingFillDurationMs = 5000UL;
+constexpr unsigned long kPumpDurationMs = 3000UL;
+constexpr unsigned long kMistingDurationMs = 5000UL;
+constexpr unsigned long kSideBottleLoadingFillDurationMs = 3000UL;
 constexpr unsigned long kMixBlinkHalfPeriodMs = 1000UL;
 constexpr RgbColor kOffColor = {0, 0, 0};
 constexpr RgbColor kSuccessColor = {0, 255, 0};
