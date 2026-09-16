@@ -5,10 +5,12 @@ interface SerialPortLike {
   readonly writable: WritableStream<Uint8Array> | null;
   open(options: { baudRate: number }): Promise<void>;
   close(): Promise<void>;
+  forget?(): Promise<void>;
 }
 
 interface SerialApiLike {
   requestPort(): Promise<SerialPortLike>;
+  getPorts?(): Promise<SerialPortLike[]>;
 }
 
 interface NavigatorWithSerial extends Navigator {
@@ -49,23 +51,25 @@ export class ChemHardwareController {
     const serial = (navigator as NavigatorWithSerial).serial;
     if (!serial) throw new Error("Web Serial API indisponível neste navegador.");
 
+    await this.forgetStalePorts(serial);
     const port = await serial.requestPort();
-    await port.open({ baudRate: BAUD_RATE });
-
-    if (!port.writable || !port.readable) {
-      await port.close();
-      throw new Error("A porta serial não está pronta para comunicação.");
-    }
-
-    this.port = port;
-    this.writer = port.writable.getWriter();
-    this.reader = port.readable.getReader();
-    this.readTask = this.readResponses();
 
     try {
+      // Open immediately after selection so an unavailable TTY is rejected before
+      // it is considered a usable Arduino connection.
+      await port.open({ baudRate: BAUD_RATE });
+      this.port = port;
+
+      if (!port.writable || !port.readable) {
+        throw new Error("A porta serial não está pronta para comunicação.");
+      }
+
+      this.writer = port.writable.getWriter();
+      this.reader = port.readable.getReader();
+      this.readTask = this.readResponses();
       await this.waitForReady();
     } catch (error) {
-      await this.disconnect();
+      await this.discardFailedPort(port);
       throw error;
     }
   }
@@ -204,6 +208,31 @@ export class ChemHardwareController {
   private async sendRaw(command: string): Promise<void> {
     if (!this.writer) return;
     await this.writer.write(this.encoder.encode(`${command}\n`));
+  }
+
+  private async discardFailedPort(port: SerialPortLike): Promise<void> {
+    try {
+      if (this.port === port) await this.disconnect();
+      else await port.close();
+    } catch {
+      // A failed open may leave the port closed already.
+    }
+
+    try {
+      await port.forget?.();
+    } catch {
+      // Older browsers may not support revoking a port programmatically.
+    }
+  }
+
+  private async forgetStalePorts(serial: SerialApiLike): Promise<void> {
+    try {
+      const ports = await serial.getPorts?.();
+      await Promise.all(ports?.map(port => port.forget?.()) ?? []);
+    } catch {
+      // A port can disappear while its saved permission is being revoked.
+      // The device picker can still continue with any remaining ports.
+    }
   }
 
   private resolvePendingMix(): void {
