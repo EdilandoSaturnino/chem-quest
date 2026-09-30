@@ -2,14 +2,11 @@
 #include "config.h"
 #include "flow_controller.h"
 #include "led_strip.h"
-#include "mp3_player.h"
 #include "serial_protocol.h"
-#include "sound_catalog.h"
 
 Actuators actuators;
 LedStrip ledStrip;
-Mp3Player mp3Player;
-FlowController flowController(actuators, ledStrip, mp3Player);
+FlowController flowController(actuators, ledStrip);
 SerialProtocol serialProtocol;
 
 void handleCommand(const SerialCommand& command) {
@@ -61,9 +58,6 @@ void publishFlowEvent(const FlowEvent& event) {
     case FlowEventType::Pumping:
       SerialProtocol::sendFlowPumping();
       return;
-    case FlowEventType::Announcing:
-      SerialProtocol::sendFlowAnnouncing(soundDefinition(event.sound).protocolName);
-      return;
     case FlowEventType::Misting:
       SerialProtocol::sendFlowMisting();
       return;
@@ -72,12 +66,6 @@ void publishFlowEvent(const FlowEvent& event) {
       return;
     case FlowEventType::Aborted:
       SerialProtocol::sendFlowAborted();
-      return;
-    case FlowEventType::Mp3BusyStartError:
-      SerialProtocol::sendMp3BusyStartError(soundDefinition(event.sound).protocolName);
-      return;
-    case FlowEventType::Mp3BusyEndError:
-      SerialProtocol::sendMp3BusyEndError(soundDefinition(event.sound).protocolName);
       return;
     case FlowEventType::None:
       return;
