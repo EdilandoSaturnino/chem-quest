@@ -8,7 +8,7 @@ FlowController::FlowController(Actuators& actuators, LedStrip& ledStrip)
 void FlowController::begin() {
   actuators_.stopAll();
   ledStrip_.clear();
-    (Phase::Idle);
+  enterPhase(Phase::Idle);
 }
 
 void FlowController::update() {
@@ -17,10 +17,9 @@ void FlowController::update() {
     case Phase::ResultVisible:
       return;
 
-    case Phase::Pumping: {
+    case Phase::LiquidFlow: {
       const unsigned long elapsedMs = millis() - phaseStartedAt_;
-      if (phaseElapsed(Config::kPumpDurationMs)) {
-        actuators_.setPumps(false);
+      if (phaseElapsed(Config::kLiquidFlowDurationMs)) {
         ledStrip_.clear();
         actuators_.setMistMaker(true);
         ledStrip_.showMixing(activeColors_.middle, true);
@@ -29,22 +28,12 @@ void FlowController::update() {
         return;
       }
 
-      const uint8_t position = static_cast<uint8_t>(
-          (elapsedMs / Config::kLoadingStepIntervalMs) % Config::kMiddleLedCount);
+      const uint8_t position = min(
+          Config::kHoseLedCount,
+          static_cast<uint8_t>(
+              elapsedMs * (Config::kHoseLedCount + 1) / Config::kLiquidFlowDurationMs));
       ledStrip_.showLoading(activeColors_.middle, position);
-      const uint8_t leftLitLedCount = min(
-          Config::kLeftLedCount,
-          static_cast<uint8_t>(
-              elapsedMs * Config::kLeftLedCount / Config::kSideBottleLoadingFillDurationMs + 1));
-      const uint8_t rightLitLedCount = min(
-          Config::kRightLedCount,
-          static_cast<uint8_t>(
-              elapsedMs * Config::kRightLedCount / Config::kSideBottleLoadingFillDurationMs + 1));
-      ledStrip_.showSideLoading(
-          activeColors_.left,
-          leftLitLedCount,
-          activeColors_.right,
-          rightLitLedCount);
+      ledStrip_.showLiquidInHoses(activeColors_.left, activeColors_.right, position);
       return;
     }
 
@@ -80,8 +69,7 @@ bool FlowController::start(const Config::BottleColors& colors, Config::MixOutcom
   Config::BottleColors displayColors = colors;
   displayColors.middle = Config::kOffColor;
   ledStrip_.showPreview(displayColors);
-  actuators_.setPumps(true);
-  enterPhase(Phase::Pumping);
+  enterPhase(Phase::LiquidFlow);
   setEvent(FlowEventType::Pumping);
   return true;
 }
@@ -124,7 +112,7 @@ bool FlowController::phaseElapsed(unsigned long durationMs) const {
 }
 
 bool FlowController::active() const {
-  return phase_ == Phase::Pumping || phase_ == Phase::Misting;
+  return phase_ == Phase::LiquidFlow || phase_ == Phase::Misting;
 }
 
 void FlowController::finish() {

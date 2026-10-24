@@ -32,7 +32,7 @@ class FlowController {
  private:
   enum class Phase {
     Idle,
-    Pumping,
+    LiquidFlow,
     Misting,
     ResultVisible,
   };
