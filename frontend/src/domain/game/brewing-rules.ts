@@ -2,7 +2,6 @@ import type { Compound, Difficulty } from "../compounds/compound";
 import { findCompoundBySymbols } from "../compounds/compound-catalog";
 import type { ElementSymbol } from "../elements/element";
 import {
-  CONSOLATION_POINTS,
   POINTS_BY_CHALLENGE,
   POINTS_BY_DISCOVERY,
   type ChallengeMode,
@@ -35,7 +34,7 @@ export function evaluateChallengeBrew(
   if (made) {
     return {
       kind: "challenge-off", compound: made, target,
-      points: CONSOLATION_POINTS,
+      points: 0,
     };
   }
   return { kind: "challenge-miss", target, points: 0 };

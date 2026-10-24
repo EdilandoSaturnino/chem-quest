@@ -33,7 +33,7 @@ constexpr uint8_t kRightLedDataPin = 4;
 constexpr uint8_t kRightLedCount = 7;
 
 // Two 32-pixel WS2812 strips replace the physical pump hoses. They fill from
-// the bottles towards the cauldron to simulate liquid travelling through them.
+// their last LED towards their first LED to simulate liquid travelling through them.
 constexpr uint8_t kLeftHoseLedDataPin = 3;
 constexpr uint8_t kRightHoseLedDataPin = 2;
 constexpr uint8_t kHoseLedCount = 32;

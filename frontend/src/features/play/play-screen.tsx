@@ -51,7 +51,7 @@ export function PlayScreen({
 }: PlayScreenProps) {
   const isDesktop = useIsDesktop();
   const isChallenge = mode !== "livre";
-  const freeModeInitializedRef = useRef(false);
+  const hardwareInitializedRef = useRef(false);
 
   const session = usePlaySession({ mode, onScoreGained, onLifeLost, hardware });
 
@@ -72,34 +72,28 @@ export function PlayScreen({
   }, []);
 
   useEffect(() => {
-    if (mode !== "livre") {
-      freeModeInitializedRef.current = false;
-      return;
-    }
-
     let cancelled = false;
-    freeModeInitializedRef.current = false;
+    hardwareInitializedRef.current = false;
 
     void (async () => {
       await hardware.off();
       if (cancelled) return;
 
-      freeModeInitializedRef.current = true;
+      hardwareInitializedRef.current = true;
       await hardware.enterFreeMode();
     })();
 
     return () => {
       cancelled = true;
-      freeModeInitializedRef.current = false;
+      hardwareInitializedRef.current = false;
     };
   }, [hardware, mode]);
 
   useEffect(() => {
-    if (mode !== "livre") return;
     if (session.brewing || session.lastOutcome) return;
 
     if (session.selectedElements.length === 0) {
-      if (freeModeInitializedRef.current) void hardware.off();
+      if (hardwareInitializedRef.current) void hardware.off();
       return;
     }
 
@@ -110,8 +104,6 @@ export function PlayScreen({
   }, [hardware, mode, session.brewing, session.lastOutcome, session.selectedElements]);
 
   useEffect(() => {
-    if (mode !== "livre") return;
-
     return () => {
       void hardware.off();
     };

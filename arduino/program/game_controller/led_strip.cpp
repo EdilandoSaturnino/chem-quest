@@ -106,7 +106,8 @@ void LedStrip::showFill(
     uint8_t filledLedCount) {
   strip.clear();
   const uint32_t liquidColor = strip.Color(color.red, color.green, color.blue);
-  for (uint8_t index = 0; index < filledLedCount; ++index) {
+  for (uint8_t offset = 0; offset < filledLedCount; ++offset) {
+    const uint8_t index = Config::kHoseLedCount - 1 - offset;
     strip.setPixelColor(index, liquidColor);
   }
   strip.show();
