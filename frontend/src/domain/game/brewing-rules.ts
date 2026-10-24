@@ -17,11 +17,6 @@ export type BrewOutcome =
   | { kind: "free-fizzle";         points: 0 };
 
 
-function magicPotionChance(numElements: number): number {
-  return Math.max(0.10, 1 - (numElements - 1) * 0.18);
-}
-
-
 export function evaluateChallengeBrew(
   mode: ChallengeMode,
   syms: readonly ElementSymbol[],
@@ -47,10 +42,6 @@ export function evaluateFreeBrew(syms: readonly ElementSymbol[]): BrewOutcome {
   if (made) {
     const points = POINTS_BY_DISCOVERY[made.diff as Difficulty];
     return { kind: "discovery", compound: made, points };
-  }
-
-  if (Math.random() < magicPotionChance(syms.length)) {
-    return { kind: "free-potion", points: syms.length * 30 };
   }
   return { kind: "free-fizzle", points: 0 };
 }

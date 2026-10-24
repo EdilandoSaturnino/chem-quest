@@ -147,5 +147,5 @@ function pickTarget(diff: ChallengeMode, previous?: Compound | null): Compound {
 }
 
 function isSuccessfulOutcome(outcome: BrewOutcome): boolean {
-  return outcome.kind !== "challenge-miss" && outcome.kind !== "free-fizzle";
+  return outcome.kind === "challenge-hit" || outcome.kind === "discovery";
 }
