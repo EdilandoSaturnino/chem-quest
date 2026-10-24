@@ -27,12 +27,9 @@ class SerialProtocol {
   static void sendOk(const __FlashStringHelper* message);
   static void sendError(const __FlashStringHelper* message);
   static void sendFlowPumping();
-  static void sendFlowAnnouncing(const char* soundName);
   static void sendFlowMisting();
   static void sendFlowDone();
   static void sendFlowAborted();
-  static void sendMp3BusyStartError(const char* soundName);
-  static void sendMp3BusyEndError(const char* soundName);
 
  private:
   bool parseBufferedCommand(SerialCommand& command);

@@ -45,7 +45,4 @@ export const POINTS_BY_DISCOVERY: Readonly<Record<ChallengeMode, number>> = {
 };
 
 
-export const CONSOLATION_POINTS = 40;
-
-
 export const STARTING_LIVES = 3;

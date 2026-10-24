@@ -54,11 +54,6 @@ void SerialProtocol::sendFlowPumping() {
   Serial.println(F("FLOW PUMPING"));
 }
 
-void SerialProtocol::sendFlowAnnouncing(const char* soundName) {
-  Serial.print(F("FLOW ANNOUNCING "));
-  Serial.println(soundName);
-}
-
 void SerialProtocol::sendFlowMisting() {
   Serial.println(F("FLOW MISTING"));
 }
@@ -69,16 +64,6 @@ void SerialProtocol::sendFlowDone() {
 
 void SerialProtocol::sendFlowAborted() {
   Serial.println(F("FLOW ABORTED"));
-}
-
-void SerialProtocol::sendMp3BusyStartError(const char* soundName) {
-  Serial.print(F("ERROR MP3_BUSY_START "));
-  Serial.println(soundName);
-}
-
-void SerialProtocol::sendMp3BusyEndError(const char* soundName) {
-  Serial.print(F("ERROR MP3_BUSY_END "));
-  Serial.println(soundName);
 }
 
 bool SerialProtocol::parseBufferedCommand(SerialCommand& command) {

@@ -18,8 +18,6 @@ import {
 import { randomFrom } from "../../domain/game/random";
 import type { ChemHardwareControls } from "../../hooks/useChemHardware";
 
-const VIRTUAL_BREW_ANIMATION_MS = 1400;
-
 interface UsePlaySessionParams {
   mode: PlayableMode;
   onScoreGained: (delta: number) => void;
@@ -98,11 +96,7 @@ export function usePlaySession({
       : evaluateFreeBrew(syms);
 
     try {
-      if (mode === "livre") {
-        await hardware.mix(bottleColors, isSuccessfulOutcome(outcome));
-      } else {
-        await new Promise(resolve => setTimeout(resolve, VIRTUAL_BREW_ANIMATION_MS));
-      }
+      await hardware.mix(bottleColors, isSuccessfulOutcome(outcome));
     } catch {
       setBrewing(false);
       return;
@@ -147,5 +141,5 @@ function pickTarget(diff: ChallengeMode, previous?: Compound | null): Compound {
 }
 
 function isSuccessfulOutcome(outcome: BrewOutcome): boolean {
-  return outcome.kind !== "challenge-miss" && outcome.kind !== "free-fizzle";
+  return outcome.kind === "challenge-hit" || outcome.kind === "discovery";
 }

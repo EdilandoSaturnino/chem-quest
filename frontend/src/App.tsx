@@ -15,6 +15,7 @@ import { PeriodicGameScreen } from "./features/periodic-game/periodic-game-scree
 import { GameOverScreen } from "./features/game-over/came-over-screen";
 import { LeaderboardScreen } from "./features/leaderboard/leader-board-screen";
 import { AppShell } from "./components/layout/app-shell";
+import { EngineMenu } from "./components/layout/engine-menu";
 import { useChemHardware } from "./hooks/useChemHardware";
 
 interface GameOverState {
@@ -63,6 +64,7 @@ export default function App() {
   return (
     <AppShell>
       <GlobalStyles />
+      <EngineMenu hardware={hardware} />
       {gameOverState
         ? <GameOverScreen
           score={gameOverState.score}

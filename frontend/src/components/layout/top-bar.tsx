@@ -13,7 +13,7 @@ interface TopBarProps {
 export function TopBar({ onBack, modeLabel, score, lives, extra }: TopBarProps) {
   return (
     <header style={{
-      padding: "12px 24px",
+      padding: "12px 24px 12px 92px",
       display: "flex", alignItems: "center", justifyContent: "space-between",
       borderBottom: "1px solid rgba(212,175,55,0.15)",
       flexShrink: 0,

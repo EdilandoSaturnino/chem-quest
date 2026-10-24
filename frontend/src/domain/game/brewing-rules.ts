@@ -2,7 +2,6 @@ import type { Compound, Difficulty } from "../compounds/compound";
 import { findCompoundBySymbols } from "../compounds/compound-catalog";
 import type { ElementSymbol } from "../elements/element";
 import {
-  CONSOLATION_POINTS,
   POINTS_BY_CHALLENGE,
   POINTS_BY_DISCOVERY,
   type ChallengeMode,
@@ -15,11 +14,6 @@ export type BrewOutcome =
   | { kind: "discovery";           compound: Compound; points: number }
   | { kind: "free-potion";         points: number }
   | { kind: "free-fizzle";         points: 0 };
-
-
-function magicPotionChance(numElements: number): number {
-  return Math.max(0.10, 1 - (numElements - 1) * 0.18);
-}
 
 
 export function evaluateChallengeBrew(
@@ -35,7 +29,7 @@ export function evaluateChallengeBrew(
   if (made) {
     return {
       kind: "challenge-off", compound: made, target,
-      points: CONSOLATION_POINTS,
+      points: 0,
     };
   }
   return { kind: "challenge-miss", target, points: 0 };
@@ -47,10 +41,6 @@ export function evaluateFreeBrew(syms: readonly ElementSymbol[]): BrewOutcome {
   if (made) {
     const points = POINTS_BY_DISCOVERY[made.diff as Difficulty];
     return { kind: "discovery", compound: made, points };
-  }
-
-  if (Math.random() < magicPotionChance(syms.length)) {
-    return { kind: "free-potion", points: syms.length * 30 };
   }
   return { kind: "free-fizzle", points: 0 };
 }

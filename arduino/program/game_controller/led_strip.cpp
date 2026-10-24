@@ -3,12 +3,16 @@
 LedStrip::LedStrip()
     : leftPixels_(Config::kLeftLedCount, Config::kLeftLedDataPin, NEO_GRB + NEO_KHZ800),
       middlePixels_(Config::kMiddleLedCount, Config::kMiddleLedDataPin, NEO_GRB + NEO_KHZ800),
-      rightPixels_(Config::kRightLedCount, Config::kRightLedDataPin, NEO_GRB + NEO_KHZ800) {}
+      rightPixels_(Config::kRightLedCount, Config::kRightLedDataPin, NEO_GRB + NEO_KHZ800),
+      leftHosePixels_(Config::kHoseLedCount, Config::kLeftHoseLedDataPin, NEO_GRB + NEO_KHZ800),
+      rightHosePixels_(Config::kHoseLedCount, Config::kRightHoseLedDataPin, NEO_GRB + NEO_KHZ800) {}
 
 void LedStrip::begin() {
   leftPixels_.begin();
   middlePixels_.begin();
   rightPixels_.begin();
+  leftHosePixels_.begin();
+  rightHosePixels_.begin();
   clear();
 }
 
@@ -16,7 +20,10 @@ void LedStrip::clear() {
   clearStrip(leftPixels_);
   clearStrip(middlePixels_);
   clearStrip(rightPixels_);
+  clearStrip(leftHosePixels_);
+  clearStrip(rightHosePixels_);
   displayedLoadingPosition_ = Config::kMiddleLedCount;
+  displayedHosePosition_ = Config::kHoseLedCount;
 }
 
 void LedStrip::showPreview(const Config::BottleColors& colors) {
@@ -46,13 +53,26 @@ void LedStrip::showLoading(const Config::RgbColor& middleColor, uint8_t position
   displayedLoadingColor_ = middleColor;
 }
 
-void LedStrip::showSideLoading(
+void LedStrip::showLiquidInHoses(
     const Config::RgbColor& leftColor,
-    uint8_t leftLitLedCount,
     const Config::RgbColor& rightColor,
-    uint8_t rightLitLedCount) {
-  showBottomToTop(leftPixels_, leftColor, leftLitLedCount);
-  showBottomToTop(rightPixels_, rightColor, rightLitLedCount);
+    uint8_t position) {
+  const uint8_t filledLedCount = min(position, Config::kHoseLedCount);
+  if (displayedHosePosition_ == filledLedCount &&
+      displayedLeftHoseColor_.red == leftColor.red &&
+      displayedLeftHoseColor_.green == leftColor.green &&
+      displayedLeftHoseColor_.blue == leftColor.blue &&
+      displayedRightHoseColor_.red == rightColor.red &&
+      displayedRightHoseColor_.green == rightColor.green &&
+      displayedRightHoseColor_.blue == rightColor.blue) {
+    return;
+  }
+
+  showFill(leftHosePixels_, leftColor, filledLedCount);
+  showFill(rightHosePixels_, rightColor, filledLedCount);
+  displayedHosePosition_ = filledLedCount;
+  displayedLeftHoseColor_ = leftColor;
+  displayedRightHoseColor_ = rightColor;
 }
 
 void LedStrip::clearMiddle() {
@@ -80,14 +100,15 @@ void LedStrip::showSolid(Adafruit_NeoPixel& strip, const Config::RgbColor& color
   strip.show();
 }
 
-void LedStrip::showBottomToTop(
+void LedStrip::showFill(
     Adafruit_NeoPixel& strip,
     const Config::RgbColor& color,
-    uint8_t litLedCount) {
-  const uint8_t visibleLedCount = min(litLedCount, static_cast<uint8_t>(strip.numPixels()));
-  const uint32_t visibleColor = strip.Color(color.red, color.green, color.blue);
-  for (uint8_t index = 0; index < strip.numPixels(); ++index) {
-    strip.setPixelColor(index, index < visibleLedCount ? visibleColor : 0);
+    uint8_t filledLedCount) {
+  strip.clear();
+  const uint32_t liquidColor = strip.Color(color.red, color.green, color.blue);
+  for (uint8_t offset = 0; offset < filledLedCount; ++offset) {
+    const uint8_t index = Config::kHoseLedCount - 1 - offset;
+    strip.setPixelColor(index, liquidColor);
   }
   strip.show();
 }

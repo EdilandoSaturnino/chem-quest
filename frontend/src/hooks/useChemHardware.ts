@@ -12,6 +12,7 @@ export type ChemHardwareStatus =
 export interface ChemHardwareControls {
   readonly status: ChemHardwareStatus;
   readonly error: string | null;
+  readonly dismissConnectionError: () => void;
   readonly connect: () => Promise<void>;
   readonly disconnect: () => Promise<void>;
   readonly enterFreeMode: () => Promise<void>;
@@ -27,7 +28,18 @@ export function useChemHardware(): ChemHardwareControls {
   );
   const [error, setError] = useState<string | null>(null);
 
+  const dismissConnectionError = useCallback(() => {
+    setError(null);
+    setStatus(current => current === "error"
+      ? (ChemHardwareController.isSupported() ? "disconnected" : "unsupported")
+      : current);
+  }, []);
+
   const connect = useCallback(async () => {
+    // Retain the controller as soon as a connection starts. This prevents two
+    // device pickers or TTY opens from being started before React re-renders.
+    if (controllerRef.current) return;
+
     if (!ChemHardwareController.isSupported()) {
       setStatus("unsupported");
       setError("Web Serial API indisponível neste navegador.");
@@ -39,11 +51,15 @@ export function useChemHardware(): ChemHardwareControls {
 
     try {
       const controller = new ChemHardwareController();
-      await controller.connect();
       controllerRef.current = controller;
+      await controller.connect();
       setStatus("connected");
     } catch (e) {
       controllerRef.current = null;
+      if (isPortPickerCancellation(e)) {
+        setStatus("disconnected");
+        return;
+      }
       setStatus("error");
       setError(e instanceof Error ? e.message : "Falha ao conectar ao Arduino.");
     }
@@ -103,11 +119,20 @@ export function useChemHardware(): ChemHardwareControls {
   return useMemo(() => ({
     status,
     error,
+    dismissConnectionError,
     connect,
     disconnect,
     enterFreeMode,
     preview,
     mix,
     off,
-  }), [status, error, connect, disconnect, enterFreeMode, preview, mix, off]);
+  }), [status, error, dismissConnectionError, connect, disconnect, enterFreeMode, preview, mix, off]);
+}
+
+function isPortPickerCancellation(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+
+  // Web Serial uses NotFoundError when its native device picker is dismissed.
+  // Some browsers report the same user cancellation as AbortError.
+  return error.name === "NotFoundError" || error.name === "AbortError";
 }
